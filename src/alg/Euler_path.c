@@ -30,7 +30,7 @@ static GraphBool EulerPath_recursive(Package *pkg, GraphLinkedNode **const pred,
     if (!EulerPath_recursive(pkg, &path->next, to)) return GRAPH_FALSE;
     pkg->dfsDst = from;
   }
-  return (GraphBool)(from == pkg->dfsDst);
+  return from == pkg->dfsDst;
 }
 
 // 栈实现
