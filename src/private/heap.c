@@ -1,7 +1,7 @@
 #include "private/heap.h"
 #include <stdlib.h>
 
-void graphHeapPercolateDown(GraphHeap *heap, GraphSize father) {
+static void graphHeapifyDown(GraphHeap *heap, GraphSize father) {
   const GraphId top = heap->data[father];
   const WeightType topValue = heap->weight[top];
 
@@ -22,7 +22,6 @@ GraphHeap *graphHeapCreate(const GraphSize capacity, const WeightType *weight) {
   heap->capacity = capacity;
   heap->size = 0;
   heap->weight = weight;
-  *heap->data = -1;
   return heap;
 }
 
@@ -31,7 +30,8 @@ void graphHeapRelease(GraphHeap *heap) { free(heap); }
 void graphHeapPush(GraphHeap *heap, const GraphId id) {
   const WeightType value = heap->weight[id];
   GraphSize child = ++heap->size;
-  for (GraphSize father; value < heap->weight[heap->data[father = child << 1]];
+  for (GraphSize father;
+       ((father = child >> 1)) && value < heap->weight[heap->data[father]];
        child = father) {
     heap->data[child] = heap->data[father];
   }
@@ -42,7 +42,7 @@ GraphId graphHeapPop(GraphHeap *heap) {
   GraphId *top = heap->data + 1;
   const GraphId ret = *top;
   *top = heap->data[heap->size--];
-  graphHeapPercolateDown(heap, 1);
+  graphHeapifyDown(heap, 1);
   return ret;
 }
 
@@ -53,6 +53,6 @@ GraphHeap *graphHeapBuild(const GraphSize capacity, const WeightType *weight) {
   GraphId *init = heap->data + 1;
   for (GraphId i = 0; i != capacity; ++i) init[i] = i;
 
-  for (uint64_t i = capacity >> 1; i; --i) graphHeapPercolateDown(heap, i);
+  for (uint64_t i = capacity >> 1; i; --i) graphHeapifyDown(heap, i);
   return heap;
 }
