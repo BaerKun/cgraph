@@ -6,7 +6,7 @@
 typedef struct {
   GraphSize capacity, size;
   GraphSize front, rear;
-  GraphId data[0];
+  GraphId elems[0];
 } GraphQueue;
 
 GraphQueue *graphNewQueue(GraphSize capacity);

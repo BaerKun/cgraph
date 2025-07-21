@@ -9,13 +9,13 @@ GraphQueue *graphNewQueue(const GraphSize capacity) {
 }
 
 void graphQueuePush(GraphQueue *queue, const GraphId item) {
-  queue->data[queue->front] = item;
+  queue->elems[queue->front] = item;
   if (++queue->front == queue->capacity) queue->front = 0;
   ++queue->size;
 }
 
 GraphId graphQueuePop(GraphQueue *queue) {
-  const GraphId item = queue->data[queue->rear];
+  const GraphId item = queue->elems[queue->rear];
   if (++queue->rear == queue->capacity) queue->rear = 0;
   --queue->size;
   return item;
