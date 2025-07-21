@@ -52,11 +52,11 @@ void BellmanFordShortest(const Graph *const graph, const WeightType weight[],
 
   GraphId id, to;
   distance[source] = 0;
-  isInQueue[source] = GRAPH_TRUE;
+  // isInQueue[source] = GRAPH_TRUE;
   graphQueuePush(queue, source);
   while (!graphQueueEmpty(queue)) {
     const GraphId from = graphQueuePop(queue);
-    isInQueue[from] = GRAPH_TRUE;
+    isInQueue[from] = GRAPH_FALSE;
 
     while (graphIterNextEdge(iter, from, &id, &to)) {
       if (distance[to] <= distance[from] + weight[id]) continue;
