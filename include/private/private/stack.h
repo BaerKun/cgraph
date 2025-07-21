@@ -5,7 +5,7 @@
 
 typedef struct {
   GraphSize size;
-  GraphId data[0];
+  GraphId elems[0];
 } GraphStack;
 
 GraphStack *graphNewStack(GraphSize capacity);
@@ -13,11 +13,11 @@ GraphStack *graphNewStack(GraphSize capacity);
 void graphStackRelease(GraphStack *stack);
 
 static inline void graphStackPush(GraphStack *const stack, const GraphId item) {
-  stack->data[stack->size++] = item;
+  stack->elems[stack->size++] = item;
 }
 
 static inline GraphId graphStackPop(GraphStack *const stack) {
-  return stack->data[--stack->size];
+  return stack->elems[--stack->size];
 }
 
 static inline GraphBool graphStackEmpty(const GraphStack *const stack) {

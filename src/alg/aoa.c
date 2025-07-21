@@ -73,10 +73,10 @@ void criticalPath(const Graph *aoa, const GraphInt indegree[],
   forward(&pkg);
   graphIterResetEdge(pkg.iter, INVALID_ID);
 
-  const GraphId *last = pkg.queue->data + aoa->vertNum - 1;
+  const GraphId *last = pkg.queue->elems + aoa->vertNum - 1;
   lateStart[*last] = earlyStart[*last];
 
-  backward(&pkg, pkg.queue->data, last);
+  backward(&pkg, pkg.queue->elems, last);
 
   free(pkg.indegree);
   graphIterRelease(pkg.iter);
