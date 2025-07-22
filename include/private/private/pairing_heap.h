@@ -3,15 +3,19 @@
 
 #include "graph/type.h"
 
-typedef struct  {
-  GraphId child;
-  GraphId sibling;
-  GraphId parent;
-} PairingHeapNode;
+// 视作只有右子树符合约定的搜索二叉树
+typedef struct PairingHeapNode_ PairingHeapNode;
+struct PairingHeapNode_ {
+  WeightType weight;
+  PairingHeapNode *left;  // sibling
+  PairingHeapNode *right; // child
+  PairingHeapNode **parent;
+};
 
 typedef struct {
-  GraphId root;
   const WeightType *weights;
+  PairingHeapNode *root;
+  PairingHeapNode **stack;
   PairingHeapNode nodes[0];
 } GraphPairingHeap;
 
@@ -27,7 +31,7 @@ GraphId graphPairingHeapPop(GraphPairingHeap *heap);
 void graphPairingHeapUpdate(GraphPairingHeap *heap, GraphId id);
 
 static inline GraphBool graphPairingHeapEmpty(const GraphPairingHeap *heap) {
-  return heap->root == INVALID_ID;
+  return !heap->root;
 }
 
 #endif // PAIRING_HEAP_H
