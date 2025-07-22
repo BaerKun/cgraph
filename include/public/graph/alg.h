@@ -24,11 +24,11 @@ void graphFindScc(const Graph *graph, GraphId connectionId[]);
 FlowType EdmondsKarpMaxFlow(const Graph *network, const FlowType capacity[],
                             FlowType flow[], GraphId source, GraphId sink);
 
-void PrimMinSpanningTree(const Graph *graph, const WeightType weight[],
+void PrimMinSpanningTree(const Graph *graph, const WeightType weights[],
                          GraphId predecessor[], GraphId root);
 
 void KruskalMinSpanningTree(const GraphLinkedNode *set,
-                            const WeightType weight[], GraphSize edgeNum,
+                            const WeightType weights[], GraphSize edgeNum,
                             GraphSize vertNum, GraphId tree[]);
 
 void topoSort(const Graph *graph, const GraphInt indegree[], GraphId sort[]);
@@ -39,10 +39,10 @@ void topoPath(const Graph *graph, const GraphInt indegree[],
 void unweightedShortest(const Graph *graph, GraphId predecessor[],
                         GraphId source, GraphId target);
 
-void DijkstraShortest(const Graph *graph, const WeightType weight[],
+void DijkstraShortest(const Graph *graph, const WeightType weights[],
                       GraphId predecessor[], GraphId source, GraphId target);
 
-void BellmanFordShortest(const Graph *graph, const WeightType weight[],
+void BellmanFordShortest(const Graph *graph, const WeightType weights[],
                          GraphId predecessor[], GraphId source);
 
 #endif // GRAPH_ALG_H

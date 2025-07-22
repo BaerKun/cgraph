@@ -1,46 +1,54 @@
 #include "graph/iter.h"
 #include "private/graph_detail.h"
-#include "private/heap.h"
+#include "private/pairing_heap.h"
 #include "private/queue.h"
 #include <stdlib.h>
 #include <string.h>
 
-void DijkstraShortest(const Graph *const graph, const WeightType weight[],
+void DijkstraShortest(const Graph *const graph, const WeightType weights[],
                       GraphId predecessor[], const GraphId source,
                       const GraphId target) {
+  enum { UNVISITED, VISITED, OVER };
   const GraphView *view = VIEW(graph);
   GraphIter *iter = graphGetIter(graph);
-  GraphBool *visited = calloc(view->vertRange, sizeof(GraphBool));
+  uint8_t *flags = calloc(view->vertRange, sizeof(GraphBool));
   WeightType *distance = malloc(view->vertRange * sizeof(WeightType));
-  GraphHeap *heap = graphHeapCreate(graph->vertNum, distance);
+  GraphPairingHeap *heap = graphPairingHeapCreate(graph->vertNum, distance);
   memset(distance, UNREACHABLE_BYTE, view->vertRange * sizeof(WeightType));
   memset(predecessor, INVALID_ID, view->vertRange * sizeof(GraphId));
 
   GraphId id, to;
   distance[source] = 0;
-  graphHeapPush(heap, source);
-  while (!graphHeapEmpty(heap)) {
-    const GraphId from = graphHeapPop(heap);
+  graphPairingHeapPush(heap, source);
+  while (!graphPairingHeapEmpty(heap)) {
+    const GraphId from = graphPairingHeapPop(heap);
     if (from == target) break;
+    flags[from] = OVER;
 
-    visited[from] = GRAPH_TRUE;
     while (graphIterNextEdge(iter, from, &id, &to)) {
-      if (visited[to] || distance[to] <= distance[from] + weight[id]) continue;
+      uint8_t *flag = flags + to;
+      if (*flag != OVER && distance[from] + weights[id] < distance[to]) {
+        distance[to] = distance[from] + weights[id];
+        predecessor[to] = from;
 
-      distance[to] = distance[from] + weight[id];
-      predecessor[to] = from;
-      graphHeapPush(heap, to);
+        if (*flag == VISITED) {
+          graphPairingHeapUpdate(heap, to);
+        } else {
+          *flag = VISITED;
+          graphPairingHeapPush(heap, to);
+        }
+      }
     }
   }
 
-  free(visited);
+  free(flags);
   free(distance);
   graphIterRelease(iter);
-  graphHeapRelease(heap);
+  graphPairingHeapRelease(heap);
 }
 
 // 无负值圈
-void BellmanFordShortest(const Graph *const graph, const WeightType weight[],
+void BellmanFordShortest(const Graph *const graph, const WeightType weights[],
                          GraphId predecessor[], const GraphId source) {
   const GraphView *view = VIEW(graph);
   GraphIter *iter = graphGetIter(graph);
@@ -59,9 +67,9 @@ void BellmanFordShortest(const Graph *const graph, const WeightType weight[],
     isInQueue[from] = GRAPH_FALSE;
 
     while (graphIterNextEdge(iter, from, &id, &to)) {
-      if (distance[to] <= distance[from] + weight[id]) continue;
+      if (distance[to] <= distance[from] + weights[id]) continue;
 
-      distance[to] = distance[from] + weight[id];
+      distance[to] = distance[from] + weights[id];
       predecessor[to] = from;
 
       if (!isInQueue[to]) {
