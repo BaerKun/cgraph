@@ -24,12 +24,19 @@ void graphFindScc(const Graph *graph, GraphId connectionId[]);
 FlowType EdmondsKarpMaxFlow(const Graph *network, const FlowType capacity[],
                             FlowType flow[], GraphId source, GraphId sink);
 
+/*
+ * 只支持无向图
+ * 输出顶点前驱（树状）
+ */
 void PrimMinSpanningTree(const Graph *graph, const WeightType weights[],
                          GraphId predecessor[], GraphId root);
 
-void KruskalMinSpanningTree(const GraphLinkedNode *set,
-                            const WeightType weights[], GraphSize edgeNum,
-                            GraphSize vertNum, GraphId tree[]);
+/*
+ * 只支持无向图
+ * 输出边id
+ */
+void KruskalMinSpanningTree(const Graph *graph, const WeightType weights[],
+                            GraphId edges[]);
 
 void topoSort(const Graph *graph, const GraphInt indegree[], GraphId sort[]);
 
