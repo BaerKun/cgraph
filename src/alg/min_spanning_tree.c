@@ -46,25 +46,38 @@ void PrimMinSpanningTree(const Graph *graph, const WeightType weights[],
 
 #include "private/disjoint_set.h"
 
-void KruskalMinSpanningTree(const GraphEndpoint *set, const WeightType weight[],
-                            const GraphSize edgeNum, const GraphSize vertNum,
-                            GraphId *tree) {
-  GraphHeap *heap = graphHeapBuild(edgeNum, weight);
-  GraphDisjointSet *disjointSet = graphDisjointCreate(vertNum);
+static void KruskalHeapInit(const GraphView *view, GraphHeap *heap) {
+  GraphIter *iter = graphIterFromView(view);
+  GraphId from, eid, to;
+  while (graphIterNextVert(iter, &from)) {
+    while (graphIterNextEdge(iter, from, &eid, &to)) {
+      graphHeapPreBuild(heap, eid);
+    }
+  }
+  graphHeapBuild(heap);
+  graphIterRelease(iter);
+}
+
+void KruskalMinSpanningTree(const Graph *graph, const WeightType weight[],
+                            GraphId edges[]) {
+  const GraphView *view = VIEW(graph);
+  GraphHeap *heap = graphHeapCreate(graph->edgeNum, weight);
+  GraphDisjointSet *disjointSet = graphDisjointCreate(graph->vertNum);
+  KruskalHeapInit(view, heap);
 
   GraphSize counter = 0;
   while (!graphHeapEmpty(heap)) {
-    const GraphId id = graphHeapPop(heap);
-    const GraphEndpoint *edge = set + id;
+    const GraphId eid = graphHeapPop(heap);
+    const GraphEndpoint *edge = view->endpts + eid;
     const GraphId cls1 = graphDisjointFind(disjointSet, edge->to);
     const GraphId cls2 = graphDisjointFind(disjointSet, edge->from);
 
     if (cls1 != cls2) {
-      tree[counter++] = id;
+      edges[counter++] = eid;
       graphDisjointUnion(disjointSet, cls1, cls2);
     }
   }
-  if (counter + 1 != vertNum) {
+  if (counter + 1 != graph->vertNum) {
     // No spanning tree
   }
 

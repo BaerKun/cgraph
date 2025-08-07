@@ -92,19 +92,26 @@ int testWeightedPath() {
 
   const WeightType weights[12] = {11, 9, 12, 9, 4, 3, 5, 7, 13, 12, 15, 14};
   GraphId predecessor[7];
-  DijkstraShortest(graph, weights, predecessor, 0, 6);
 
-  putchar('6');
+  DijkstraShortest(graph, weights, predecessor, 0, 6);
+  printf("Weighted Shortest Path\nDijkstra: 6");
+  for (GraphId i = predecessor[6]; i != -1; i = predecessor[i]) {
+    printf(" <- %lld", i);
+  }
+
+  BellmanFordShortest(graph, weights, predecessor, 0);
+  printf("\nBellmanFord: 6");
   for (GraphId i = predecessor[6]; i != -1; i = predecessor[i]) {
     printf(" <- %lld", i);
   }
   putchar('\n');
 
   graphDestroy(graph);
+  return 0;
 }
 
 int main() {
-  // testIter();
-  // testMaxFlow();
+  testIter();
+  testMaxFlow();
   testWeightedPath();
 }
