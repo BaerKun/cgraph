@@ -1,10 +1,9 @@
-#include "private/graph_detail.h"
-#include "private/queue.h"
-#include "graph/iter.h"
+#include "private/_iter.h"
+#include "private/structure/queue.h"
 #include <string.h>
 
 void unweightedShortest(const Graph *const graph, GraphId predecessor[],
-                         const GraphId source, const GraphId target) {
+                        const GraphId source, const GraphId target) {
   const GraphView *view = VIEW(graph);
   GraphIter *iter = graphIterFromView(view);
   GraphQueue *queue = graphNewQueue(graph->vertNum);

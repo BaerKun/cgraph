@@ -1,4 +1,4 @@
-#include "private/heap.h"
+#include "private/structure/heap.h"
 #include <stdlib.h>
 
 static void graphHeapifyDown(GraphHeap *heap, GraphSize father) {

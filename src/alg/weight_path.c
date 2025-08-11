@@ -1,17 +1,16 @@
-#include "graph/iter.h"
-#include "private/graph_detail.h"
-#include "private/pairing_heap.h"
-#include "private/queue.h"
+#include "private/_iter.h"
+#include "private/structure/pairing_heap.h"
+#include "private/structure/queue.h"
 #include <stdlib.h>
 #include <string.h>
 
 void DijkstraShortest(const Graph *const graph, const WeightType weights[],
                       GraphId predecessor[], const GraphId source,
                       const GraphId target) {
-  enum { UNVISITED, VISITED, OVER };
+  enum { NOT_SEEN = 0, IN_HEAP, DONE };
   const GraphView *view = VIEW(graph);
   GraphIter *iter = graphGetIter(graph);
-  uint8_t *flags = calloc(view->vertRange, sizeof(GraphBool));
+  uint8_t *flags = calloc(view->vertRange, sizeof(uint8_t));
   WeightType *distance = malloc(view->vertRange * sizeof(WeightType));
   GraphPairingHeap *heap = graphPairingHeapCreate(graph->vertNum, distance);
   memset(distance, UNREACHABLE_BYTE, view->vertRange * sizeof(WeightType));
@@ -23,18 +22,18 @@ void DijkstraShortest(const Graph *const graph, const WeightType weights[],
   while (!graphPairingHeapEmpty(heap)) {
     const GraphId from = graphPairingHeapPop(heap);
     if (from == target) break;
-    flags[from] = OVER;
+    flags[from] = DONE;
 
     while (graphIterNextEdge(iter, from, &id, &to)) {
       uint8_t *flag = flags + to;
-      if (*flag != OVER && distance[from] + weights[id] < distance[to]) {
+      if (*flag != DONE && distance[from] + weights[id] < distance[to]) {
         distance[to] = distance[from] + weights[id];
         predecessor[to] = from;
 
-        if (*flag == VISITED) {
+        if (*flag == IN_HEAP) {
           graphPairingHeapUpdate(heap, to);
         } else {
-          *flag = VISITED;
+          *flag = IN_HEAP;
           graphPairingHeapPush(heap, to);
         }
       }

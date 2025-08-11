@@ -1,6 +1,5 @@
-#include "graph/iter.h"
+#include "private/_iter.h"
 #include "graph/linked_list.h"
-#include "private/graph_detail.h"
 #include <stdlib.h>
 
 // 递归实现

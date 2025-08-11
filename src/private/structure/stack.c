@@ -1,4 +1,4 @@
-#include "private/stack.h"
+#include "private/structure/stack.h"
 #include <stdlib.h>
 
 GraphStack *graphNewStack(const GraphSize capacity) {

@@ -1,10 +1,9 @@
-#include "private/graph_detail.h"
-#include "private/queue.h"
-#include "graph/iter.h"
+#include "private/_iter.h"
+#include "private/structure/queue.h"
 #include <stdlib.h>
 #include <string.h>
 
-void graphIndegreeInit(GraphIter *iter, const GraphInt indegree[],
+void graphIndegreeInit(const GraphView *view, const GraphInt indegree[],
                        GraphQueue *queue);
 
 typedef struct {
@@ -52,7 +51,7 @@ static void init(Package *pkg, const GraphView *view,
 
   pkg->iter = graphIterFromView(view);
   pkg->queue = graphNewQueue(vertRange);
-  graphIndegreeInit(pkg->iter, pkg->indegree, pkg->queue);
+  graphIndegreeInit(view, pkg->indegree, pkg->queue);
   pkg->indegree = malloc(vertRange * sizeof(GraphInt));
   memcpy(pkg->indegree, indegree, vertRange * sizeof(GraphInt));
   memset(pkg->earlyStart, 0, vertRange * sizeof(TimeType));

@@ -1,15 +1,9 @@
-#include "graph/iter.h"
-#include "private/graph_detail.h"
-#include "private/queue.h"
+#include "private/_iter.h"
+#include "private/structure/queue.h"
 
-void graphIndegreeInit(GraphIter *iter, const GraphInt indegree[],
+void graphIndegreeInit(const GraphView *view, const GraphInt indegree[],
                        GraphQueue *queue) {
-  GraphId from, id, to;
-  while (graphIterNextVert(iter, &from)) {
-    while (graphIterNextEdge(iter, from, &id, &to)) {
-      if (indegree[to] == 0) graphQueuePush(queue, to);
-    }
+  FOREACH_EDGE(view, from, id, to) {
+    if (indegree[to] == 0) graphQueuePush(queue, to);
   }
-  graphIterResetVert(iter);
-  graphIterResetEdge(iter, INVALID_ID);
 }

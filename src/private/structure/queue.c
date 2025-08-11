@@ -1,4 +1,4 @@
-#include "private/queue.h"
+#include "private/structure/queue.h"
 #include <stdlib.h>
 
 GraphQueue *graphNewQueue(const GraphSize capacity) {

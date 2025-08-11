@@ -40,8 +40,6 @@ struct Graph_ {
   Attribute *vertAttr, *edgeAttr;
 };
 
-#define VIEW(graph) (&(graph)->manager.view)
-
-GraphIter *graphIterFromView(const GraphView *view);
+#define REVERSE(did) ((did) ^ 1)
 
 #endif // GRAPH_DETAIL_H

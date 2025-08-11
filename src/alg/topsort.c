@@ -1,10 +1,9 @@
-#include "private/graph_detail.h"
-#include "private/queue.h"
-#include "graph/iter.h"
+#include "private/_iter.h"
+#include "private/structure/queue.h"
 #include <stdlib.h>
 #include <string.h>
 
-void graphIndegreeInit(GraphIter *iter, const GraphInt indegree[],
+void graphIndegreeInit(const GraphView *view, const GraphInt indegree[],
                        GraphQueue *queue);
 
 void topoPath(const Graph *const graph, const GraphInt indegree[],
@@ -12,7 +11,7 @@ void topoPath(const Graph *const graph, const GraphInt indegree[],
   const GraphView *view = VIEW(graph);
   GraphIter *iter = graphIterFromView(view);
   GraphQueue *queue = graphNewQueue(graph->vertNum);
-  graphIndegreeInit(iter, indegree, queue);
+  graphIndegreeInit(view, indegree, queue);
   GraphInt *copyIndeg = malloc(view->vertRange * sizeof(GraphInt));
   memcpy(copyIndeg, indegree, view->vertRange * sizeof(GraphInt));
   memset(predecessor, INVALID_ID, view->vertRange * sizeof(GraphId));
@@ -28,7 +27,8 @@ void topoPath(const Graph *const graph, const GraphInt indegree[],
     }
   }
 
-  if (counter != graph->vertNum) {/* ERROR: 圈 */}
+  if (counter != graph->vertNum) { /* ERROR: 圈 */
+  }
 
   free(copyIndeg);
   graphIterRelease(iter);
@@ -40,7 +40,7 @@ void topoSort(const Graph *const graph, const GraphInt indegree[],
   const GraphView *view = VIEW(graph);
   GraphIter *iter = graphIterFromView(view);
   GraphQueue *queue = graphNewQueue(graph->vertNum);
-  graphIndegreeInit(iter, indegree, queue);
+  graphIndegreeInit(view, indegree, queue);
   GraphInt *copyIndeg = malloc(view->vertRange * sizeof(GraphInt));
   memcpy(copyIndeg, indegree, view->vertRange * sizeof(GraphInt));
 
@@ -55,7 +55,8 @@ void topoSort(const Graph *const graph, const GraphInt indegree[],
     }
   }
 
-  if (counter != graph->vertNum) {/* ERROR: 圈 */}
+  if (counter != graph->vertNum) { /* ERROR: 圈 */
+  }
 
   free(copyIndeg);
   graphIterRelease(iter);

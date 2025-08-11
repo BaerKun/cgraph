@@ -1,4 +1,4 @@
-#include "private/pairing_heap.h"
+#include "private/structure/pairing_heap.h"
 #include <stdlib.h>
 
 GraphPairingHeap *graphPairingHeapCreate(const GraphSize capacity,

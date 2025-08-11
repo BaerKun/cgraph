@@ -1,16 +1,14 @@
-#include "graph/iter.h"
-#include "private/graph_detail.h"
-#include "private/heap.h"
-#include "private/pairing_heap.h"
+#include "private/_iter.h"
+#include "private/structure/pairing_heap.h"
 #include <stdlib.h>
 #include <string.h>
 
 void PrimMinSpanningTree(const Graph *graph, const WeightType weights[],
                          GraphId predecessor[], const GraphId root) {
-  enum { UNVISITED, VISITED, OVER };
+  enum { NOT_SEEN = 0, IN_HEAP, DONE };
   const GraphView *view = VIEW(graph);
   GraphIter *iter = graphIterFromView(view);
-  uint8_t *flags = calloc(view->vertRange, sizeof(GraphBool));
+  uint8_t *flags = calloc(view->vertRange, sizeof(uint8_t));
   WeightType *minWeight = malloc(view->vertRange * sizeof(WeightType));
   GraphPairingHeap *heap = graphPairingHeapCreate(graph->vertNum, minWeight);
   memset(minWeight, UNREACHABLE_BYTE, view->vertRange * sizeof(WeightType));
@@ -20,18 +18,18 @@ void PrimMinSpanningTree(const Graph *graph, const WeightType weights[],
   graphPairingHeapPush(heap, root);
   while (!graphPairingHeapEmpty(heap)) {
     const GraphId from = graphPairingHeapPop(heap);
-    flags[from] = OVER;
+    flags[from] = DONE;
 
     while (graphIterNextEdge(iter, from, &id, &to)) {
       uint8_t *flag = flags + to;
-      if (*flag != OVER && weights[id] < minWeight[to]) {
+      if (*flag != DONE && weights[id] < minWeight[to]) {
         minWeight[to] = weights[id];
         predecessor[to] = from;
 
-        if (*flag == VISITED) {
+        if (*flag == IN_HEAP) {
           graphPairingHeapPush(heap, to);
         } else {
-          *flag = VISITED;
+          *flag = IN_HEAP;
           graphPairingHeapUpdate(heap, to);
         }
       }
@@ -44,18 +42,21 @@ void PrimMinSpanningTree(const Graph *graph, const WeightType weights[],
   graphPairingHeapRelease(heap);
 }
 
-#include "private/disjoint_set.h"
+#include "private/structure/disjoint_set.h"
+#include "private/structure/heap.h"
 
 static void KruskalHeapInit(const GraphView *view, GraphHeap *heap) {
-  GraphIter *iter = graphIterFromView(view);
-  GraphId from, eid, to;
-  while (graphIterNextVert(iter, &from)) {
-    while (graphIterNextEdge(iter, from, &eid, &to)) {
+  GraphBool *isInHeap = calloc(view->edgeRange, sizeof(GraphBool));
+
+  FOREACH_EDGE(view, from, eid, to) {
+    // 去除反向边
+    if (!isInHeap[eid]) {
+      isInHeap[eid] = GRAPH_TRUE;
       graphHeapPreBuild(heap, eid);
     }
   }
+  free(isInHeap);
   graphHeapBuild(heap);
-  graphIterRelease(iter);
 }
 
 void KruskalMinSpanningTree(const Graph *graph, const WeightType weight[],
@@ -77,7 +78,7 @@ void KruskalMinSpanningTree(const Graph *graph, const WeightType weight[],
       graphDisjointUnion(disjointSet, cls1, cls2);
     }
   }
-  if (counter + 1 != graph->vertNum) {
+  if (counter != graph->vertNum - 1) {
     // No spanning tree
   }
 

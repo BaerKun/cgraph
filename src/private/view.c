@@ -4,15 +4,6 @@
 
 #define DID(eid) ((eid) << 1 | (eid) >> (sizeof(GraphId) * 8 - 1))
 
-GraphIter *graphIterFromView(const GraphView *view) {
-  GraphIter *iter =
-      malloc(sizeof(GraphIter) + view->vertRange * sizeof(GraphId));
-  iter->view = view;
-  iter->vertCurr = view->vertHead;
-  memcpy(iter->edgeCurr, view->edgeHead, view->vertRange * sizeof(GraphId));
-  return iter;
-}
-
 GraphView *graphViewReserveEdge(const GraphView *view,
                                 const GraphBool directed) {
   char *const buff = malloc(sizeof(GraphView) +
@@ -56,5 +47,5 @@ GraphId *graphFind(GraphId *next, GraphId *head, const GraphId id) {
   GraphId *predNext = head;
   while (*predNext != INVALID_ID && *predNext != id)
     predNext = next + *predNext;
-  return *predNext == INVALID_ID ? 0 : predNext;
+  return *predNext == INVALID_ID ? NULL : predNext;
 }

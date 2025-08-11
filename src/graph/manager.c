@@ -57,7 +57,7 @@ GraphId graphManagerNewEdge(GraphManager *mgr, const GraphId from,
   if (!directed) graphInsertEdge(view, to, REVERSE(did));
 
   const GraphId eid = view->directed ? did : (did >> 1);
-  view->endpts[eid] = (GraphEndpoint){to, from};
+  view->endpts[eid] = (GraphEndpoint){.to = to, .from = from};
   if (eid == view->edgeRange) ++view->edgeRange;
   return eid;
 }

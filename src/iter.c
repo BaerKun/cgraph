@@ -1,7 +1,15 @@
-#include "graph/iter.h"
-#include "private/view.h"
+#include "private/_iter.h"
 #include <stdlib.h>
 #include <string.h>
+
+GraphIter *graphIterFromView(const GraphView *view) {
+  GraphIter *iter =
+      malloc(sizeof(GraphIter) + view->vertRange * sizeof(GraphId));
+  iter->view = view;
+  iter->vertCurr = view->vertHead;
+  memcpy(iter->edgeCurr, view->edgeHead, view->vertRange * sizeof(GraphId));
+  return iter;
+}
 
 GraphIter *graphGetIter(const Graph *graph) {
   return graphIterFromView(VIEW(graph));
@@ -28,7 +36,7 @@ void graphIterCurr(const GraphIter *iter, GraphId *from, GraphId *eid,
   if (*from == INVALID_ID) return;
   *eid = iter->edgeCurr[*from];
   if (*eid == INVALID_ID) return;
-  forward(iter->view, *eid, eid, to);
+  _forward(iter->view, *eid, eid, to);
 }
 
 GraphBool graphIterNextVert(GraphIter *iter, GraphId *vid) {
@@ -42,7 +50,7 @@ GraphBool graphIterNextEdge(GraphIter *iter, const GraphId from, GraphId *eid,
                             GraphId *to) {
   GraphId *curr = iter->edgeCurr + from;
   if (*curr == INVALID_ID) return GRAPH_FALSE;
-  forward(iter->view, *curr, eid, to);
+  _forward(iter->view, *curr, eid, to);
   *curr = iter->view->edgeNext[*curr];
   return GRAPH_TRUE;
 }

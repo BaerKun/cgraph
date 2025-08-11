@@ -1,4 +1,3 @@
-#include "graph/iter.h"
 #include "private/attribute.h"
 #include "private/manager.h"
 #include <stdlib.h>
@@ -53,23 +52,4 @@ void graphDeleteVert(Graph *graph, const GraphId id) {
 void graphDeleteEdge(Graph *graph, const GraphId id) {
   graphManagerDeleteEdge(&graph->manager, id);
   --graph->edgeNum;
-}
-
-void graphGetIdRange(const Graph *graph, GraphSize *vert, GraphSize *edge) {
-  if (vert) *vert = graph->manager.view.vertRange;
-  if (edge) *edge = graph->manager.view.edgeRange;
-}
-
-void graphGetIndegree(const Graph *const graph, GraphInt indegree[]) {
-  const GraphView *view = VIEW(graph);
-  memset(indegree, 0, view->vertRange * sizeof(GraphInt));
-
-  GraphIter *iter = graphIterFromView(view);
-  GraphId from, id, to;
-  while (graphIterNextVert(iter, &from)) {
-    while (graphIterNextEdge(iter, from, &id, &to)) {
-      ++indegree[to];
-    }
-  }
-  graphIterRelease(iter);
 }

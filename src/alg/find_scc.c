@@ -1,5 +1,5 @@
-#include "graph/iter.h"
-#include "private/stack.h"
+#include "private/_iter.h"
+#include "private/structure/stack.h"
 #include "private/view.h"
 #include <stdlib.h>
 #include <string.h>
@@ -17,7 +17,7 @@ static void findSccForward(Package *pkg, const GraphId from) {
   GraphId did, eid, to;
   pkg->flag[from] = 1;
   while (graphIterNextDirect(pkg->iter, from, &did)) {
-    forward(pkg->iter->view, did, &eid, &to);
+    _forward(pkg->iter->view, did, &eid, &to);
     if (!pkg->flag[to]) findSccForward(pkg, to);
     graphInsertEdge(pkg->reverse, to, REVERSE(did)); // 边转向
   }
@@ -25,11 +25,10 @@ static void findSccForward(Package *pkg, const GraphId from) {
 }
 
 static void findSccBackward(Package *pkg, const GraphId from) {
-  GraphId did, eid, to;
+  GraphId eid, to;
   pkg->connectionId[from] = pkg->counter;
   pkg->flag[from] = 0;
-  while (graphIterNextDirect(pkg->iter, from, &did)) {
-    forward(pkg->iter->view, did, &eid, &to);
+  while (graphIterNextEdge(pkg->iter, from, &eid, &to)) {
     if (pkg->flag[to]) findSccBackward(pkg, to);
   }
 }
