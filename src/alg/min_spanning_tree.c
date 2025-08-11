@@ -1,4 +1,4 @@
-#include "private/_iter.h"
+#include "private/iter_internal.h"
 #include "private/structure/pairing_heap.h"
 #include <stdlib.h>
 #include <string.h>

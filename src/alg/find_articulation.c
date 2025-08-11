@@ -1,5 +1,5 @@
-#include "private/_iter.h"
 #include "graph/linked_list.h"
+#include "private/iter_internal.h"
 #include <stdlib.h>
 
 typedef struct VertexAttribute_ Vertex;

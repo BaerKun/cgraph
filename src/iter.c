@@ -1,4 +1,4 @@
-#include "private/_iter.h"
+#include "private/iter_internal.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -17,17 +17,9 @@ GraphIter *graphGetIter(const Graph *graph) {
 
 void graphIterRelease(GraphIter *iter) { free(iter); }
 
-void graphIterResetVert(GraphIter *iter) {
-  iter->vertCurr = iter->view->vertHead;
-}
-
-void graphIterResetEdge(GraphIter *iter, const GraphId from) {
-  if (from == INVALID_ID) {
-    memcpy(iter->edgeCurr, iter->view->edgeHead,
-           iter->view->vertRange * sizeof(GraphId));
-  } else {
-    iter->edgeCurr[from] = iter->view->edgeHead[from];
-  }
+void graphIterResetAllEdges(GraphIter *iter) {
+  const GraphView *view = iter->view;
+  memcpy(iter->edgeCurr, view->edgeHead, view->vertRange * sizeof(GraphId));
 }
 
 void graphIterCurr(const GraphIter *iter, GraphId *from, GraphId *eid,
@@ -36,21 +28,11 @@ void graphIterCurr(const GraphIter *iter, GraphId *from, GraphId *eid,
   if (*from == INVALID_ID) return;
   *eid = iter->edgeCurr[*from];
   if (*eid == INVALID_ID) return;
-  _forward(iter->view, *eid, eid, to);
+  parseForward(iter->view, *eid, eid, to);
 }
 
-GraphBool graphIterNextVert(GraphIter *iter, GraphId *vid) {
-  if (iter->vertCurr == INVALID_ID) return GRAPH_FALSE;
-  *vid = iter->vertCurr;
-  iter->vertCurr = iter->view->vertNext[iter->vertCurr];
-  return GRAPH_TRUE;
-}
-
-GraphBool graphIterNextEdge(GraphIter *iter, const GraphId from, GraphId *eid,
-                            GraphId *to) {
-  GraphId *curr = iter->edgeCurr + from;
-  if (*curr == INVALID_ID) return GRAPH_FALSE;
-  _forward(iter->view, *curr, eid, to);
-  *curr = iter->view->edgeNext[*curr];
-  return GRAPH_TRUE;
-}
+extern void graphIterResetVert(GraphIter *iter);
+extern void graphIterResetEdge(GraphIter *iter, GraphId from);
+extern GraphBool graphIterNextVert(GraphIter *iter, GraphId *vid);
+extern GraphBool graphIterNextEdge(GraphIter *iter, GraphId from, GraphId *eid,
+                                   GraphId *to);

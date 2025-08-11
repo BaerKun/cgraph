@@ -1,4 +1,4 @@
-#include "private/_iter.h"
+#include "private/iter_internal.h"
 #include "private/structure/pairing_heap.h"
 #include "private/structure/queue.h"
 #include <stdlib.h>
@@ -9,7 +9,7 @@ void DijkstraShortest(const Graph *const graph, const WeightType weights[],
                       const GraphId target) {
   enum { NOT_SEEN = 0, IN_HEAP, DONE };
   const GraphView *view = VIEW(graph);
-  GraphIter *iter = graphGetIter(graph);
+  GraphIter *iter = graphIterFromView(view);
   uint8_t *flags = calloc(view->vertRange, sizeof(uint8_t));
   WeightType *distance = malloc(view->vertRange * sizeof(WeightType));
   GraphPairingHeap *heap = graphPairingHeapCreate(graph->vertNum, distance);
@@ -50,7 +50,7 @@ void DijkstraShortest(const Graph *const graph, const WeightType weights[],
 void BellmanFordShortest(const Graph *const graph, const WeightType weights[],
                          GraphId predecessor[], const GraphId source) {
   const GraphView *view = VIEW(graph);
-  GraphIter *iter = graphGetIter(graph);
+  GraphIter *iter = graphIterFromView(view);
   GraphQueue *queue = graphNewQueue(graph->vertNum);
   GraphBool *isInQueue = calloc(view->vertRange, sizeof(GraphBool));
   WeightType *distance = malloc(view->vertRange * sizeof(WeightType));

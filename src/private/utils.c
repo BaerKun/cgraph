@@ -1,4 +1,4 @@
-#include "private/_iter.h"
+#include "private/iter_internal.h"
 #include "private/structure/queue.h"
 
 void graphIndegreeInit(const GraphView *view, const GraphInt indegree[],

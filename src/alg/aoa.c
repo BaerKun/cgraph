@@ -1,4 +1,4 @@
-#include "private/_iter.h"
+#include "private/iter_internal.h"
 #include "private/structure/queue.h"
 #include <stdlib.h>
 #include <string.h>
@@ -70,7 +70,7 @@ void criticalPath(const Graph *aoa, const GraphInt indegree[],
   init(&pkg, VIEW(aoa), indegree);
 
   forward(&pkg);
-  graphIterResetEdge(pkg.iter, INVALID_ID);
+  graphIterResetAllEdges(pkg.iter);
 
   const GraphId *last = pkg.queue->elems + aoa->vertNum - 1;
   lateStart[*last] = earlyStart[*last];

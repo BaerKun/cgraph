@@ -1,4 +1,4 @@
-#include "private/_iter.h"
+#include "private/iter_internal.h"
 #include <string.h>
 
 void graphGetIdRange(const Graph *graph, GraphSize *vert, GraphSize *edge) {

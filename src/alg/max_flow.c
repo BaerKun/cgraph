@@ -1,4 +1,4 @@
-#include "private/_iter.h"
+#include "private/iter_internal.h"
 #include "private/structure/queue.h"
 #include "private/view.h"
 #include <stdlib.h>
@@ -28,7 +28,7 @@ static GraphBool bfs(const Package *pkg, GraphQueue *const queue) {
     const GraphId from = graphQueuePop(queue);
 
     while (graphIterNextDirect(pkg->iter, from, &did)) {
-      _forward(pkg->residual, did, &eid, &to);
+      parseForward(pkg->residual, did, &eid, &to);
       if (pkg->pred[to] != INVALID_ID || to == pkg->src) continue;
 
       pkg->pred[to] = did;
@@ -46,7 +46,7 @@ static FlowType pathFlow(const Package *pkg) {
   GraphId eid, from;
   for (GraphId did = pkg->pred[pkg->sink]; did != INVALID_ID;
        did = pkg->pred[from]) {
-    _backward(pkg->residual, did, &eid, &from);
+    parseBackward(pkg->residual, did, &eid, &from);
     if (flow > pkg->cap[eid] - pkg->curr[eid]) {
       flow = pkg->cap[eid] - pkg->curr[eid];
     }
@@ -65,7 +65,7 @@ static void reverse(const GraphView *const residual, const GraphId did,
 static void update(const Package *pkg, const FlowType step) {
   GraphId eid, from, to = pkg->sink;
   for (GraphId did = pkg->pred[to]; did != INVALID_ID; did = pkg->pred[from]) {
-    _backward(pkg->residual, did, &eid, &from);
+    parseBackward(pkg->residual, did, &eid, &from);
     pkg->curr[eid] += step;
 
     // 如果edge是正向的，则flow的增加是同向的；否则相反

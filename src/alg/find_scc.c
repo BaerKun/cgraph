@@ -1,4 +1,4 @@
-#include "private/_iter.h"
+#include "private/iter_internal.h"
 #include "private/structure/stack.h"
 #include "private/view.h"
 #include <stdlib.h>
@@ -13,23 +13,23 @@ typedef struct {
   GraphId counter;
 } Package;
 
-static void findSccForward(Package *pkg, const GraphId from) {
+static void forward(Package *pkg, const GraphId from) {
   GraphId did, eid, to;
   pkg->flag[from] = 1;
   while (graphIterNextDirect(pkg->iter, from, &did)) {
-    _forward(pkg->iter->view, did, &eid, &to);
-    if (!pkg->flag[to]) findSccForward(pkg, to);
+    parseForward(pkg->iter->view, did, &eid, &to);
+    if (!pkg->flag[to]) forward(pkg, to);
     graphInsertEdge(pkg->reverse, to, REVERSE(did)); // 边转向
   }
   graphStackPush(pkg->stack, from);
 }
 
-static void findSccBackward(Package *pkg, const GraphId from) {
+static void backward(Package *pkg, const GraphId from) {
   GraphId eid, to;
   pkg->connectionId[from] = pkg->counter;
   pkg->flag[from] = 0;
   while (graphIterNextEdge(pkg->iter, from, &eid, &to)) {
-    if (pkg->flag[to]) findSccBackward(pkg, to);
+    if (pkg->flag[to]) backward(pkg, to);
   }
 }
 
@@ -46,15 +46,15 @@ void graphFindScc(const Graph *graph, GraphId connectionId[]) {
   // 正序
   GraphId from;
   while (graphIterNextVert(pkg.iter, &from)) {
-    if (flag[from] == 0) findSccForward(&pkg, from);
+    if (flag[from] == 0) forward(&pkg, from);
   }
 
   // 逆序
   iter->view = reverse;
-  graphIterResetEdge(pkg.iter, INVALID_ID);
+  graphIterResetAllEdges(pkg.iter);
   while (!graphStackEmpty(stack)) {
     const GraphId vert = graphStackPop(stack);
-    if (flag[vert] == 1) findSccBackward(&pkg, vert);
+    if (flag[vert] == 1) backward(&pkg, vert);
     ++pkg.counter;
   }
 
