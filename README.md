@@ -1,9 +1,19 @@
-## cgraph
-    A simple C language graph theory library
-    一个简单c语言图论库
+## CGraph
+CGraph is a simple **C language** graph theory algorithm library.
+It provides common graph algorithms and convenient iterator interfaces, suitable for learning.
 
----
+## Features
+- Topological Sort
+- Shortest Path Algorithms
+- Unweighted shortest path (BFS)
+- Weighted shortest path (Dijkstra, Bellman-Ford, Floyd-Warshall)
+- Minimum Spanning Tree (Prim, Kruskal)
+- Maximum Flow (Edmonds-Karp)
+- Euler Path & Circuit
+- Articulation Points Detection
+- Strongly Connected Components
+- AOA Network Critical Path Analysis (Critical Path Method)
+- Iterator Interfaces (traverse vertices and edges)
 
-### 2025.7.18
-    first commit
-
+## License
+This project is licensed under the MIT License
