@@ -51,7 +51,7 @@ void cgraphFindScc(const CGraph *graph, CGraphId connectionId[]) {
 
   // 逆序
   iter->view = reverse;
-  cgraphIterResetAllEdges(pkg.iter);
+  cgraphIterResetEdge(pkg.iter, INVALID_ID);
   while (!cgraphStackEmpty(stack)) {
     const CGraphId vert = cgraphStackPop(stack);
     if (flag[vert] == 1) backward(&pkg, vert);

@@ -1,7 +1,7 @@
 #include "private/structure/queue.h"
 #include <stdlib.h>
 
-CGraphQueue *cgraphNewQueue(const CGraphSize capacity) {
+CGraphQueue *cgraphQueueCreate(const CGraphSize capacity) {
   CGraphQueue *queue =
       malloc(sizeof(CGraphQueue) + capacity * sizeof(CGraphId));
   queue->capacity = capacity;

@@ -6,23 +6,18 @@
 #define VIEW(graph) (&(graph)->manager.view)
 
 #define FOREACH_EDGE(view, from, eid, to)                                      \
-  for (CGraphId from = view->vertHead; from != INVALID_ID;                      \
+  for (CGraphId from = view->vertHead; from != INVALID_ID;                     \
        from = view->vertNext[from])                                            \
-    for (CGraphId did_ = view->edgeHead[from], eid, to; did_ != INVALID_ID;     \
+    for (CGraphId did_ = view->edgeHead[from], eid, to; did_ != INVALID_ID;    \
          did_ = view->edgeNext[did_])                                          \
       if (parseForward(view, did_, &eid, &to), 1)
 
 CGraphIter *cgraphIterFromView(const CGraphView *view);
 void cgraphIterRelease(CGraphIter *iter);
-void cgraphIterResetAllEdges(CGraphIter *iter);
+void cgraphIterResetEdge(CGraphIter *iter, CGraphId from);
 
 inline void cgraphIterResetVert(CGraphIter *iter) {
   iter->vertCurr = iter->view->vertHead;
-}
-
-inline void cgraphIterResetEdge(CGraphIter *iter, const CGraphId from) {
-  if (from == INVALID_ID) return cgraphIterResetAllEdges(iter);
-  iter->edgeCurr[from] = iter->view->edgeHead[from];
 }
 
 static inline void parseForward(const CGraphView *view, const CGraphId did,
@@ -48,8 +43,8 @@ static inline void parseBackward(const CGraphView *view, const CGraphId did,
   }
 }
 
-static inline CGraphBool cgraphIterNextDirect(CGraphIter *iter, const CGraphId from,
-                                            CGraphId *did) {
+static inline CGraphBool
+cgraphIterNextDirect(CGraphIter *iter, const CGraphId from, CGraphId *did) {
   CGraphId *curr = iter->edgeCurr + from;
   if (*curr == INVALID_ID) return CGRAPH_FALSE;
   *did = *curr;
@@ -65,7 +60,7 @@ inline CGraphBool cgraphIterNextVert(CGraphIter *iter, CGraphId *vid) {
 }
 
 inline CGraphBool cgraphIterNextEdge(CGraphIter *iter, const CGraphId from,
-                                   CGraphId *eid, CGraphId *to) {
+                                     CGraphId *eid, CGraphId *to) {
   CGraphId *curr = iter->edgeCurr + from;
   if (*curr == INVALID_ID) return CGRAPH_FALSE;
   parseForward(iter->view, *curr, eid, to);

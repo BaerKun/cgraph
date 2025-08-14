@@ -6,7 +6,7 @@ void cgraphUnweightedShortest(const CGraph *const graph, CGraphId predecessor[],
                               const CGraphId source, const CGraphId target) {
   const CGraphView *view = VIEW(graph);
   CGraphIter *iter = cgraphIterFromView(view);
-  CGraphQueue *queue = cgraphNewQueue(graph->vertNum);
+  CGraphQueue *queue = cgraphQueueCreate(graph->vertNum);
   memset(predecessor, INVALID_ID, sizeof(CGraphId) * view->vertRange);
 
   CGraphId id, to;

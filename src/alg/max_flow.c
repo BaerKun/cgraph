@@ -93,7 +93,7 @@ FlowType cgraphMaxFlowEdmondsKarp(const CGraph *network,
   cgraphViewCopyEdge(view, residual);
 
   CGraphIter *iter = cgraphIterFromView(residual);
-  CGraphQueue *queue = cgraphNewQueue(network->vertNum);
+  CGraphQueue *queue = cgraphQueueCreate(network->vertNum);
   CGraphId *pred = malloc(view->vertRange * sizeof(CGraphId));
   FlowType *curr = calloc(view->edgeRange, sizeof(FlowType));
   memset(flow, 0, view->edgeRange * sizeof(FlowType));

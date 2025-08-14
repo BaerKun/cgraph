@@ -50,7 +50,7 @@ static void init(Package *pkg, const CGraphView *view,
   const CGraphSize vertRange = view->vertRange;
 
   pkg->iter = cgraphIterFromView(view);
-  pkg->queue = cgraphNewQueue(vertRange);
+  pkg->queue = cgraphQueueCreate(vertRange);
   cgraphIndegreeInit(view, pkg->indegree, pkg->queue);
   pkg->indegree = malloc(vertRange * sizeof(CGraphInt));
   memcpy(pkg->indegree, indegree, vertRange * sizeof(CGraphInt));
@@ -70,7 +70,7 @@ void cgraphCriticalPath(const CGraph *aoa, const CGraphInt indegree[],
   init(&pkg, VIEW(aoa), indegree);
 
   forward(&pkg);
-  cgraphIterResetAllEdges(pkg.iter);
+  cgraphIterResetEdge(pkg.iter, INVALID_ID);
 
   const CGraphId *last = pkg.queue->elems + aoa->vertNum - 1;
   lateStart[*last] = earlyStart[*last];

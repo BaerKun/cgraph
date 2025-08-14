@@ -17,9 +17,13 @@ CGraphIter *cgraphGetIter(const CGraph *graph) {
 
 void cgraphIterRelease(CGraphIter *iter) { free(iter); }
 
-void cgraphIterResetAllEdges(CGraphIter *iter) {
+void cgraphIterResetEdge(CGraphIter *iter, const CGraphId from) {
   const CGraphView *view = iter->view;
-  memcpy(iter->edgeCurr, view->edgeHead, view->vertRange * sizeof(CGraphId));
+  if (from == INVALID_ID) {
+    memcpy(iter->edgeCurr, view->edgeHead, view->vertRange * sizeof(CGraphId));
+  } else {
+    iter->edgeCurr[from] = view->edgeHead[from];
+  }
 }
 
 void cgraphIterCurr(const CGraphIter *iter, CGraphId *from, CGraphId *eid,

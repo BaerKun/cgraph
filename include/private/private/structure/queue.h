@@ -9,7 +9,7 @@ typedef struct {
   CGraphId elems[0];
 } CGraphQueue;
 
-CGraphQueue *cgraphNewQueue(CGraphSize capacity);
+CGraphQueue *cgraphQueueCreate(CGraphSize capacity);
 void cgraphQueueRelease(CGraphQueue *queue);
 
 static inline void cgraphQueueClear(CGraphQueue *queue) {

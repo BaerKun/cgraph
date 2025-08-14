@@ -52,7 +52,7 @@ void cgraphShortestBellmanFord(const CGraph *const graph,
                                CGraphId predecessor[], const CGraphId source) {
   const CGraphView *view = VIEW(graph);
   CGraphIter *iter = cgraphIterFromView(view);
-  CGraphQueue *queue = cgraphNewQueue(graph->vertNum);
+  CGraphQueue *queue = cgraphQueueCreate(graph->vertNum);
   CGraphBool *isInQueue = calloc(view->vertRange, sizeof(CGraphBool));
   WeightType *distance = malloc(view->vertRange * sizeof(WeightType));
   memset(distance, UNREACHABLE_BYTE, view->vertRange * sizeof(WeightType));

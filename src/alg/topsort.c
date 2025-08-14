@@ -10,7 +10,7 @@ void cgraphTopoPath(const CGraph *const graph, const CGraphInt indegree[],
                     CGraphId predecessor[]) {
   const CGraphView *view = VIEW(graph);
   CGraphIter *iter = cgraphIterFromView(view);
-  CGraphQueue *queue = cgraphNewQueue(graph->vertNum);
+  CGraphQueue *queue = cgraphQueueCreate(graph->vertNum);
   cgraphIndegreeInit(view, indegree, queue);
   CGraphInt *copyIndeg = malloc(view->vertRange * sizeof(CGraphInt));
   memcpy(copyIndeg, indegree, view->vertRange * sizeof(CGraphInt));
@@ -39,7 +39,7 @@ void cgraphTopoSort(const CGraph *const graph, const CGraphInt indegree[],
                     CGraphId sort[]) {
   const CGraphView *view = VIEW(graph);
   CGraphIter *iter = cgraphIterFromView(view);
-  CGraphQueue *queue = cgraphNewQueue(graph->vertNum);
+  CGraphQueue *queue = cgraphQueueCreate(graph->vertNum);
   cgraphIndegreeInit(view, indegree, queue);
   CGraphInt *copyIndeg = malloc(view->vertRange * sizeof(CGraphInt));
   memcpy(copyIndeg, indegree, view->vertRange * sizeof(CGraphInt));
