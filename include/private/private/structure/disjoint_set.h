@@ -1,17 +1,16 @@
 #ifndef DISJOINT_SET_H
 #define DISJOINT_SET_H
 
-#include "graph/type.h"
+#include "cgraph/type.h"
 
-typedef GraphId GraphDisjointSet;
+typedef CGraphId CGraphDisjointSet;
 
-GraphDisjointSet *graphDisjointCreate(GraphSize size);
+CGraphDisjointSet *cgraphDisjointCreate(CGraphSize size);
+void cgraphDisjointRelease(CGraphDisjointSet *set);
 
-void graphDisjointRelease(GraphDisjointSet *set);
-
-static void graphDisjointUnion(GraphDisjointSet *set, const GraphId class1,
-                               const GraphId class2) {
-  GraphId *neg_height = set;
+static void cgraphDisjointUnion(CGraphDisjointSet *set, const CGraphId class1,
+                               const CGraphId class2) {
+  CGraphId *neg_height = set;
   if (neg_height[class1] > neg_height[class2]) {
     set[class1] = class2;
   } else {
@@ -20,11 +19,11 @@ static void graphDisjointUnion(GraphDisjointSet *set, const GraphId class1,
   }
 }
 
-static GraphId graphDisjointFind(GraphDisjointSet *set, const GraphId id) {
-  GraphId cls;
+static CGraphId cgraphDisjointFind(CGraphDisjointSet *set, const CGraphId id) {
+  CGraphId cls;
   for (cls = id; set[cls] >= 0; cls = set[cls]);
-  for (GraphId i = id; i != cls;) {
-    const GraphId next = set[i];
+  for (CGraphId i = id; i != cls;) {
+    const CGraphId next = set[i];
     set[i] = cls;
     i = next;
   }

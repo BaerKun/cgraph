@@ -1,28 +1,36 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-#include "graph/type.h"
+#include "cgraph/type.h"
 
 typedef struct {
-  GraphSize capacity, size;
-  GraphSize front, rear;
-  GraphId elems[0];
-} GraphQueue;
+  CGraphSize capacity, size;
+  CGraphSize front, rear;
+  CGraphId elems[0];
+} CGraphQueue;
 
-GraphQueue *graphNewQueue(GraphSize capacity);
+CGraphQueue *cgraphNewQueue(CGraphSize capacity);
+void cgraphQueueRelease(CGraphQueue *queue);
 
-void graphQueueRelease(GraphQueue *queue);
-
-void graphQueuePush(GraphQueue *queue, GraphId item);
-
-GraphId graphQueuePop(GraphQueue *queue);
-
-static inline void graphQueueClear(GraphQueue *queue) {
+static inline void cgraphQueueClear(CGraphQueue *queue) {
   queue->size = queue->front = queue->rear = 0;
 }
 
-static inline GraphBool graphQueueEmpty(const GraphQueue *queue) {
+static inline CGraphBool cgraphQueueEmpty(const CGraphQueue *queue) {
   return queue->size == 0;
+}
+
+static inline void cgraphQueuePush(CGraphQueue *queue, const CGraphId item) {
+  queue->elems[queue->front] = item;
+  if (++queue->front == queue->capacity) queue->front = 0;
+  ++queue->size;
+}
+
+static inline CGraphId cgraphQueuePop(CGraphQueue *queue) {
+  const CGraphId item = queue->elems[queue->rear];
+  if (++queue->rear == queue->capacity) queue->rear = 0;
+  --queue->size;
+  return item;
 }
 
 #endif // QUEUE_H

@@ -3,15 +3,15 @@
 
 #include "graph_detail.h"
 
-void graphManagerInit(GraphManager *mgr, GraphBool directed, GraphSize vertCap,
-                      GraphSize edgeCap);
-void graphManagerDestroy(const GraphManager *mgr);
+void cgraphManagerInit(CGraphManager *mgr, CGraphBool directed, CGraphSize vertCap,
+                      CGraphSize edgeCap);
+void cgraphManagerDestroy(const CGraphManager *mgr);
 
-GraphId graphManagerNewVert(GraphManager *mgr);
-GraphId graphManagerNewEdge(GraphManager *mgr, GraphId from, GraphId to,
-                            GraphBool directed);
+CGraphId cgraphManagerNewVert(CGraphManager *mgr);
+CGraphId cgraphManagerNewEdge(CGraphManager *mgr, CGraphId from, CGraphId to,
+                            CGraphBool directed);
 
-void graphManagerDeleteVert(GraphManager *mgr, GraphId vid);
-void graphManagerDeleteEdge(GraphManager *mgr, GraphId eid);
+void cgraphManagerDeleteVert(CGraphManager *mgr, CGraphId vid);
+void cgraphManagerDeleteEdge(CGraphManager *mgr, CGraphId eid);
 
 #endif // MANAGER_H

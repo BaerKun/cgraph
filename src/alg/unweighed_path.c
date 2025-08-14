@@ -2,26 +2,26 @@
 #include "private/structure/queue.h"
 #include <string.h>
 
-void unweightedShortest(const Graph *const graph, GraphId predecessor[],
-                        const GraphId source, const GraphId target) {
-  const GraphView *view = VIEW(graph);
-  GraphIter *iter = graphIterFromView(view);
-  GraphQueue *queue = graphNewQueue(graph->vertNum);
-  memset(predecessor, INVALID_ID, sizeof(GraphId) * view->vertRange);
+void cgraphUnweightedShortest(const CGraph *const graph, CGraphId predecessor[],
+                              const CGraphId source, const CGraphId target) {
+  const CGraphView *view = VIEW(graph);
+  CGraphIter *iter = cgraphIterFromView(view);
+  CGraphQueue *queue = cgraphNewQueue(graph->vertNum);
+  memset(predecessor, INVALID_ID, sizeof(CGraphId) * view->vertRange);
 
-  GraphId id, to;
-  graphQueuePush(queue, source);
-  while (!graphQueueEmpty(queue)) {
-    const GraphId from = graphQueuePop(queue);
+  CGraphId id, to;
+  cgraphQueuePush(queue, source);
+  while (!cgraphQueueEmpty(queue)) {
+    const CGraphId from = cgraphQueuePop(queue);
 
-    while (graphIterNextEdge(iter, from, &id, &to)) {
+    while (cgraphIterNextEdge(iter, from, &id, &to)) {
       if (predecessor[to] == -1) {
         predecessor[to] = from;
         if (to == target) return;
-        graphQueuePush(queue, to);
+        cgraphQueuePush(queue, to);
       }
     }
   }
-  graphIterRelease(iter);
-  graphQueueRelease(queue);
+  cgraphIterRelease(iter);
+  cgraphQueueRelease(queue);
 }

@@ -1,32 +1,33 @@
-#include "graph/linked_list.h"
+#include "cgraph/linked_list.h"
 #include "private/iter_internal.h"
 #include <stdlib.h>
 
 // 递归实现
 typedef struct {
-  GraphIter *iter;
-  GraphBool *visited;
-  GraphId dfsDst; // 当前深度优先搜索的目标顶点
-} Package;        // 递归全局量
+  CGraphIter *iter;
+  CGraphBool *visited;
+  CGraphId dfsDst; // 当前深度优先搜索的目标顶点
+} Package;         // 递归全局量
 
-static GraphBool getTargetEdge(const Package *pkg, const GraphId from,
-                               GraphId *id, GraphId *to) {
-  while (graphIterNextEdge(pkg->iter, from, id, to)) {
+static CGraphBool getTargetEdge(const Package *pkg, const CGraphId from,
+                                CGraphId *id, CGraphId *to) {
+  while (cgraphIterNextEdge(pkg->iter, from, id, to)) {
     if (!pkg->visited[*id]) {
       pkg->visited[*id] = 1;
-      return GRAPH_TRUE;
+      return CGRAPH_TRUE;
     }
   }
-  return GRAPH_FALSE;
+  return CGRAPH_FALSE;
 }
 
-static GraphBool EulerPath_recursive(Package *pkg, GraphLinkedNode **const pred,
-                                     const GraphId from) {
-  GraphId id, to;
+static CGraphBool EulerPath_recursive(Package *pkg,
+                                      CGraphLinkedNode **const pred,
+                                      const CGraphId from) {
+  CGraphId id, to;
   while (1) {
     if (!getTargetEdge(pkg, from, &id, &to)) break;
-    GraphLinkedNode *const path = graphLinkedInsert(pred, id);
-    if (!EulerPath_recursive(pkg, &path->next, to)) return GRAPH_FALSE;
+    CGraphLinkedNode *const path = cgraphLinkedInsert(pred, id);
+    if (!EulerPath_recursive(pkg, &path->next, to)) return CGRAPH_FALSE;
     pkg->dfsDst = from;
   }
   return from == pkg->dfsDst;
@@ -34,32 +35,33 @@ static GraphBool EulerPath_recursive(Package *pkg, GraphLinkedNode **const pred,
 
 // 栈实现
 typedef struct {
-  GraphLinkedNode **pred;
-  GraphId from;
+  CGraphLinkedNode **pred;
+  CGraphId from;
 } Argument; // 入栈量，与递归相对
 
-static GraphBool EulerPath_stack(Package *pkg, GraphLinkedNode **const head,
-                                 const GraphId src, const GraphSize edgeNum) {
+static CGraphBool EulerPath_stack(Package *pkg, CGraphLinkedNode **const head,
+                                  const CGraphId src,
+                                  const CGraphSize edgeNum) {
   Argument *const stack = malloc(edgeNum * sizeof(Argument));
   Argument *ptr = stack; // 当前"函数"参数
-  GraphBool success = GRAPH_FALSE;
+  CGraphBool success = CGRAPH_FALSE;
   *ptr = (Argument){head, src};
 
-  GraphId id, to;
+  CGraphId id, to;
   while (1) {
     if (!getTargetEdge(pkg, ptr->from, &id, &to)) {
       if (ptr->from != pkg->dfsDst) break;
 
       // 结束
       if (ptr-- == stack) {
-        success = GRAPH_TRUE;
+        success = CGRAPH_TRUE;
         break;
       }
 
       pkg->dfsDst = ptr->from;
       continue;
     }
-    GraphLinkedNode *const path = graphLinkedInsert(ptr->pred, id);
+    CGraphLinkedNode *const path = cgraphLinkedInsert(ptr->pred, id);
 
     // 调用
     *++ptr = (Argument){&path->next, to};
@@ -69,12 +71,12 @@ static GraphBool EulerPath_stack(Package *pkg, GraphLinkedNode **const head,
   return success;
 }
 
-void EulerPath(const Graph *const graph, GraphLinkedNode **const path,
-               const GraphId src, const GraphId dst) {
-  const GraphView *view = VIEW(graph);
+void cgraphEulerPath(const CGraph *const graph, CGraphLinkedNode **const path,
+                     const CGraphId src, const CGraphId dst) {
+  const CGraphView *view = VIEW(graph);
   Package pkg;
-  pkg.iter = graphIterFromView(view);
-  pkg.visited = calloc(view->vertRange, sizeof(GraphBool));
+  pkg.iter = cgraphIterFromView(view);
+  pkg.visited = calloc(view->vertRange, sizeof(CGraphBool));
   pkg.dfsDst = dst;
 
   // clang-format off
@@ -83,14 +85,14 @@ void EulerPath(const Graph *const graph, GraphLinkedNode **const path,
     EulerPath_stack(&pkg, path, src, graph->edgeNum)
   ) {
     // clang-format on
-    graphLinkedClear(path);
+    cgraphLinkedClear(path);
   }
 
   free(pkg.visited);
-  graphIterRelease(pkg.iter);
+  cgraphIterRelease(pkg.iter);
 }
 
-void EulerCircuit(const Graph *const graph, GraphLinkedNode **const path,
-                  const GraphId src) {
-  EulerPath(graph, path, src, src);
+void cgraphEulerCircuit(const CGraph *const graph,
+                        CGraphLinkedNode **const path, const CGraphId src) {
+  cgraphEulerPath(graph, path, src, src);
 }

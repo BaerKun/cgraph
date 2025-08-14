@@ -1,20 +1,20 @@
 #include "private/structure/pairing_heap.h"
 #include <stdlib.h>
 
-GraphPairingHeap *graphPairingHeapCreate(const GraphSize capacity,
-                                         const WeightType *weights) {
-  GraphPairingHeap *heap =
-      malloc(sizeof(GraphPairingHeap) + capacity * sizeof(PairingHeapNode) +
-             (capacity - 1) * sizeof(PairingHeapNode *));
+CGraphPairingHeap *cgraphPairingHeapCreate(const CGraphSize capacity,
+                                           const WeightType *weights) {
+  CGraphPairingHeap *heap =
+      malloc(sizeof(CGraphPairingHeap) + capacity * sizeof(PairingHeapNode_) +
+             (capacity - 1) * sizeof(PairingHeapNode_ *));
   heap->weights = weights;
   heap->root = NULL;
-  heap->stack = (PairingHeapNode **)(heap->nodes + capacity);
+  heap->stack = (PairingHeapNode_ **)(heap->nodes + capacity);
   return heap;
 }
 
-void graphPairingHeapRelease(GraphPairingHeap *heap) { free(heap); }
+void cgraphPairingHeapRelease(CGraphPairingHeap *heap) { free(heap); }
 
-static PairingHeapNode *meld(PairingHeapNode *left, PairingHeapNode *right) {
+static PairingHeapNode_ *meld(PairingHeapNode_ *left, PairingHeapNode_ *right) {
   if (!left) return right;
   if (!right) return left;
 
@@ -34,8 +34,8 @@ static PairingHeapNode *meld(PairingHeapNode *left, PairingHeapNode *right) {
   return right;
 }
 
-void graphPairingHeapPush(GraphPairingHeap *heap, const GraphId id) {
-  PairingHeapNode *node = heap->nodes + id;
+void cgraphPairingHeapPush(CGraphPairingHeap *heap, const CGraphId id) {
+  PairingHeapNode_ *node = heap->nodes + id;
   node->weight = heap->weights[id];
   node->right = NULL;
   if (!heap->root) {
@@ -56,19 +56,19 @@ static PairingHeapNode *combine(PairingHeapNode *parent) {
 }
 */
 
-static PairingHeapNode *combine(PairingHeapNode *parent,
-                                PairingHeapNode **stack) {
+static PairingHeapNode_ *combine(PairingHeapNode_ *parent,
+                                 PairingHeapNode_ **stack) {
   if (!parent || !parent->left) return parent;
 
-  PairingHeapNode **top = stack - 1;
+  PairingHeapNode_ **top = stack - 1;
   do {
-    PairingHeapNode *x = parent;
-    PairingHeapNode *y = parent->left;
+    PairingHeapNode_ *x = parent;
+    PairingHeapNode_ *y = parent->left;
     parent = y ? y->left : NULL;
     *++top = meld(y, x);
   } while (parent);
 
-  for (PairingHeapNode **pred; top != stack; top = pred) {
+  for (PairingHeapNode_ **pred; top != stack; top = pred) {
     pred = top - 1;
     *pred = meld(*top, *pred);
   }
@@ -76,15 +76,15 @@ static PairingHeapNode *combine(PairingHeapNode *parent,
   return *stack;
 }
 
-GraphId graphPairingHeapPop(GraphPairingHeap *heap) {
-  const GraphId root = heap->root - heap->nodes;
+CGraphId cgraphPairingHeapPop(CGraphPairingHeap *heap) {
+  const CGraphId root = heap->root - heap->nodes;
   // heap->root = combine(heap->root->right);
   heap->root = combine(heap->root->right, heap->stack);
   return root;
 }
 
-void graphPairingHeapUpdate(GraphPairingHeap *heap, const GraphId id) {
-  PairingHeapNode *node = heap->nodes + id;
+void cgraphPairingHeapUpdate(CGraphPairingHeap *heap, const CGraphId id) {
+  PairingHeapNode_ *node = heap->nodes + id;
   node->weight = heap->weights[id];
 
   if (node == heap->root) return;

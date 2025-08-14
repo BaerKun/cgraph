@@ -3,34 +3,34 @@
 #include <stdlib.h>
 #include <string.h>
 
-void PrimMinSpanningTree(const Graph *graph, const WeightType weights[],
-                         GraphId predecessor[], const GraphId root) {
+void cgraphMSTPrim(const CGraph *graph, const WeightType weights[],
+                   CGraphId predecessor[], const CGraphId root) {
   enum { NOT_SEEN = 0, IN_HEAP, DONE };
-  const GraphView *view = VIEW(graph);
-  GraphIter *iter = graphIterFromView(view);
+  const CGraphView *view = VIEW(graph);
+  CGraphIter *iter = cgraphIterFromView(view);
   uint8_t *flags = calloc(view->vertRange, sizeof(uint8_t));
   WeightType *minWeight = malloc(view->vertRange * sizeof(WeightType));
-  GraphPairingHeap *heap = graphPairingHeapCreate(graph->vertNum, minWeight);
+  CGraphPairingHeap *heap = cgraphPairingHeapCreate(graph->vertNum, minWeight);
   memset(minWeight, UNREACHABLE_BYTE, view->vertRange * sizeof(WeightType));
 
-  GraphId id, to;
+  CGraphId id, to;
   predecessor[root] = INVALID_ID;
-  graphPairingHeapPush(heap, root);
-  while (!graphPairingHeapEmpty(heap)) {
-    const GraphId from = graphPairingHeapPop(heap);
+  cgraphPairingHeapPush(heap, root);
+  while (!cgraphPairingHeapEmpty(heap)) {
+    const CGraphId from = cgraphPairingHeapPop(heap);
     flags[from] = DONE;
 
-    while (graphIterNextEdge(iter, from, &id, &to)) {
+    while (cgraphIterNextEdge(iter, from, &id, &to)) {
       uint8_t *flag = flags + to;
       if (*flag != DONE && weights[id] < minWeight[to]) {
         minWeight[to] = weights[id];
         predecessor[to] = from;
 
         if (*flag == IN_HEAP) {
-          graphPairingHeapPush(heap, to);
+          cgraphPairingHeapPush(heap, to);
         } else {
           *flag = IN_HEAP;
-          graphPairingHeapUpdate(heap, to);
+          cgraphPairingHeapUpdate(heap, to);
         }
       }
     }
@@ -38,50 +38,50 @@ void PrimMinSpanningTree(const Graph *graph, const WeightType weights[],
 
   free(flags);
   free(minWeight);
-  graphIterRelease(iter);
-  graphPairingHeapRelease(heap);
+  cgraphIterRelease(iter);
+  cgraphPairingHeapRelease(heap);
 }
 
 #include "private/structure/disjoint_set.h"
 #include "private/structure/heap.h"
 
-static void KruskalHeapInit(const GraphView *view, GraphHeap *heap) {
-  GraphBool *isInHeap = calloc(view->edgeRange, sizeof(GraphBool));
+static void KruskalHeapInit(const CGraphView *view, CGraphHeap *heap) {
+  CGraphBool *isInHeap = calloc(view->edgeRange, sizeof(CGraphBool));
 
   FOREACH_EDGE(view, from, eid, to) {
     // 去除反向边
     if (!isInHeap[eid]) {
-      isInHeap[eid] = GRAPH_TRUE;
-      graphHeapPreBuild(heap, eid);
+      isInHeap[eid] = CGRAPH_TRUE;
+      cgraphHeapPreBuild(heap, eid);
     }
   }
   free(isInHeap);
-  graphHeapBuild(heap);
+  cgraphHeapBuild(heap);
 }
 
-void KruskalMinSpanningTree(const Graph *graph, const WeightType weight[],
-                            GraphId edges[]) {
-  const GraphView *view = VIEW(graph);
-  GraphHeap *heap = graphHeapCreate(graph->edgeNum, weight);
-  GraphDisjointSet *disjointSet = graphDisjointCreate(graph->vertNum);
+void cgraphMSTKruskal(const CGraph *graph, const WeightType weight[],
+                      CGraphId edges[]) {
+  const CGraphView *view = VIEW(graph);
+  CGraphHeap *heap = cgraphHeapCreate(graph->edgeNum, weight);
+  CGraphDisjointSet *disjointSet = cgraphDisjointCreate(graph->vertNum);
   KruskalHeapInit(view, heap);
 
-  GraphSize counter = 0;
-  while (!graphHeapEmpty(heap)) {
-    const GraphId eid = graphHeapPop(heap);
-    const GraphEndpoint *edge = view->endpts + eid;
-    const GraphId cls1 = graphDisjointFind(disjointSet, edge->to);
-    const GraphId cls2 = graphDisjointFind(disjointSet, edge->from);
+  CGraphSize counter = 0;
+  while (!cgraphHeapEmpty(heap)) {
+    const CGraphId eid = cgraphHeapPop(heap);
+    const CGraphEndpoint *edge = view->endpts + eid;
+    const CGraphId cls1 = cgraphDisjointFind(disjointSet, edge->to);
+    const CGraphId cls2 = cgraphDisjointFind(disjointSet, edge->from);
 
     if (cls1 != cls2) {
       edges[counter++] = eid;
-      graphDisjointUnion(disjointSet, cls1, cls2);
+      cgraphDisjointUnion(disjointSet, cls1, cls2);
     }
   }
   if (counter != graph->vertNum - 1) {
     // No spanning tree
   }
 
-  graphHeapRelease(heap);
-  graphDisjointRelease(disjointSet);
+  cgraphHeapRelease(heap);
+  cgraphDisjointRelease(disjointSet);
 }

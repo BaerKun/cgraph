@@ -9,6 +9,6 @@ static inline void strHash16(const char str[16], uint64_t hash[2]) {
   strncpy((char *)hash, str, 16);
 }
 
-void graphAttrDestroyList(Attribute *attr);
+void cgraphAttrDestroyList(CGraphAttribute *attr);
 
 #endif //ATTRIBUTE_H

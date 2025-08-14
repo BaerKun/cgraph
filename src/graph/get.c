@@ -1,13 +1,13 @@
 #include "private/iter_internal.h"
 #include <string.h>
 
-void graphGetIdRange(const Graph *graph, GraphSize *vert, GraphSize *edge) {
+void cgraphGetIdRange(const CGraph *graph, CGraphSize *vert, CGraphSize *edge) {
   if (vert) *vert = graph->manager.view.vertRange;
   if (edge) *edge = graph->manager.view.edgeRange;
 }
 
-void graphGetIndegree(const Graph *const graph, GraphInt indegree[]) {
-  const GraphView *view = VIEW(graph);
-  memset(indegree, 0, view->vertRange * sizeof(GraphInt));
+void cgraphGetIndegree(const CGraph *const graph, CGraphInt indegree[]) {
+  const CGraphView *view = VIEW(graph);
+  memset(indegree, 0, view->vertRange * sizeof(CGraphInt));
   FOREACH_EDGE(view, from, eid, to) { ++indegree[to]; }
 }

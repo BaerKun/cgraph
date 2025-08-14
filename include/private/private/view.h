@@ -3,24 +3,24 @@
 
 #include "graph_detail.h"
 
-GraphView *graphViewReserveEdge(const GraphView *view, GraphBool directed);
-void graphViewCopyEdge(const GraphView *view, const GraphView *copy);
+CGraphView *cgraphViewReserveEdge(const CGraphView *view, CGraphBool directed);
+void cgraphViewCopyEdge(const CGraphView *view, const CGraphView *copy);
 
-GraphId *graphFind(GraphId *next, GraphId *head, GraphId id);
+CGraphId *cgraphFind(CGraphId *next, CGraphId *head, CGraphId id);
 
-static inline void graphUnlink(const GraphId *next, GraphId *predNext) {
+static inline void cgraphUnlink(const CGraphId *next, CGraphId *predNext) {
   *predNext = next[*predNext];
 }
 
-static inline void graphInsert(GraphId *next, GraphId *predNext,
-                               const GraphId id) {
+static inline void cgraphInsert(CGraphId *next, CGraphId *predNext,
+                                const CGraphId id) {
   next[id] = *predNext;
   *predNext = id;
 }
 
-static inline void graphInsertEdge(const GraphView *view, const GraphId from,
-                                   const GraphId did) {
-  graphInsert(view->edgeNext, view->edgeHead + from, did);
+static inline void cgraphInsertEdge(const CGraphView *view, const CGraphId from,
+                                    const CGraphId did) {
+  cgraphInsert(view->edgeNext, view->edgeHead + from, did);
 }
 
 #endif // GRAPH_VIEW_H

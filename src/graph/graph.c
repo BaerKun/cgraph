@@ -2,54 +2,54 @@
 #include "private/manager.h"
 #include <stdlib.h>
 
-GraphSize graphGetGraphSize() { return sizeof(Graph); }
+CGraphSize cgraphGetGraphSize() { return sizeof(CGraph); }
 
-void graphInit(Graph *const graph, const GraphBool directed,
-               const GraphSize vertCap, const GraphSize edgeCap) {
+void cgraphInit(CGraph *const graph, const CGraphBool directed,
+                const CGraphSize vertCap, const CGraphSize edgeCap) {
   graph->vertCap = vertCap;
   graph->edgeCap = edgeCap;
   graph->edgeNum = graph->vertNum = 0;
-  graphManagerInit(&graph->manager, directed, vertCap, edgeCap);
+  cgraphManagerInit(&graph->manager, directed, vertCap, edgeCap);
   graph->vertAttr = graph->edgeAttr = NULL;
 }
 
-void graphDestroy(const Graph *const graph) {
-  graphManagerDestroy(&graph->manager);
-  graphAttrDestroyList(graph->vertAttr);
-  graphAttrDestroyList(graph->edgeAttr);
+void cgraphDestroy(const CGraph *const graph) {
+  cgraphManagerDestroy(&graph->manager);
+  cgraphAttrDestroyList(graph->vertAttr);
+  cgraphAttrDestroyList(graph->edgeAttr);
 }
 
-GraphId graphAddVert(Graph *const graph) {
+CGraphId cgraphAddVert(CGraph *const graph) {
   if (graph->vertNum++ == graph->vertCap) {
     // realloc
   }
-  return graphManagerNewVert(&graph->manager);
+  return cgraphManagerNewVert(&graph->manager);
 }
 
-void graphReserveVert(Graph *graph, const GraphSize num){
+void cgraphReserveVert(CGraph *graph, const CGraphSize num) {
   graph->vertNum += num;
   if (graph->vertNum > graph->vertCap) {
     // realloc
   }
-  for (GraphSize i = 0; i != num; ++i) {
-    graphManagerNewVert(&graph->manager);
+  for (CGraphSize i = 0; i != num; ++i) {
+    cgraphManagerNewVert(&graph->manager);
   }
 }
 
-GraphId graphAddEdge(Graph *const graph, const GraphId from, const GraphId to,
-                     const GraphBool directed) {
+CGraphId cgraphAddEdge(CGraph *const graph, const CGraphId from,
+                       const CGraphId to, const CGraphBool directed) {
   if (graph->edgeNum++ == graph->edgeCap) {
     // realloc
   }
-  return graphManagerNewEdge(&graph->manager, from, to, directed);
+  return cgraphManagerNewEdge(&graph->manager, from, to, directed);
 }
 
-void graphDeleteVert(Graph *graph, const GraphId id) {
-  graphManagerDeleteVert(&graph->manager, id);
+void cgraphDeleteVert(CGraph *graph, const CGraphId id) {
+  cgraphManagerDeleteVert(&graph->manager, id);
   --graph->vertNum;
 }
 
-void graphDeleteEdge(Graph *graph, const GraphId id) {
-  graphManagerDeleteEdge(&graph->manager, id);
+void cgraphDeleteEdge(CGraph *graph, const CGraphId id) {
+  cgraphManagerDeleteEdge(&graph->manager, id);
   --graph->edgeNum;
 }

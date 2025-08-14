@@ -1,26 +1,25 @@
 #ifndef GRAPH_STACK_H
 #define GRAPH_STACK_H
 
-#include "graph/type.h"
+#include "cgraph/type.h"
 
 typedef struct {
-  GraphSize size;
-  GraphId elems[0];
-} GraphStack;
+  CGraphSize size;
+  CGraphId elems[0];
+} CGraphStack;
 
-GraphStack *graphNewStack(GraphSize capacity);
+CGraphStack *cgraphStackCreate(CGraphSize capacity);
+void cgraphStackRelease(CGraphStack *stack);
 
-void graphStackRelease(GraphStack *stack);
-
-static inline void graphStackPush(GraphStack *const stack, const GraphId item) {
+static inline void cgraphStackPush(CGraphStack *const stack, const CGraphId item) {
   stack->elems[stack->size++] = item;
 }
 
-static inline GraphId graphStackPop(GraphStack *const stack) {
+static inline CGraphId cgraphStackPop(CGraphStack *const stack) {
   return stack->elems[--stack->size];
 }
 
-static inline GraphBool graphStackEmpty(const GraphStack *const stack) {
+static inline CGraphBool cgraphStackEmpty(const CGraphStack *const stack) {
   return stack->size == 0;
 }
 

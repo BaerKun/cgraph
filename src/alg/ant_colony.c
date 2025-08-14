@@ -1,9 +1,7 @@
-#include "graph/linked_list.h"
-#include "private/random.h"
+#include "cgraph/linked_list.h"
 #include "private/graph_detail.h"
+#include "private/random.h"
 #include <stdlib.h>
 #include <time.h>
 
-void antColony(Graph *graph, WeightType weight[]) {
-
-}
+void antColony(CGraph *graph, WeightType weight[]) {}

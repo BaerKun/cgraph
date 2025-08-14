@@ -3,37 +3,37 @@
 #include <stdlib.h>
 #include <string.h>
 
-void graphIndegreeInit(const GraphView *view, const GraphInt indegree[],
-                       GraphQueue *queue);
+void cgraphIndegreeInit(const CGraphView *view, const CGraphInt indegree[],
+                        CGraphQueue *queue);
 
 typedef struct {
-  GraphIter *iter;
-  GraphQueue *queue;
-  GraphInt *indegree;
+  CGraphIter *iter;
+  CGraphQueue *queue;
+  CGraphInt *indegree;
   const TimeType *duration;
   TimeType *earlyStart, *lateStart;
-  GraphId *successor;
+  CGraphId *successor;
 } Package;
 
 static void forward(const Package *const pkg) {
-  GraphId id, to;
-  while (!graphQueueEmpty(pkg->queue)) {
-    const GraphId from = graphQueuePop(pkg->queue);
-    while (graphIterNextEdge(pkg->iter, from, &id, &to)) {
+  CGraphId id, to;
+  while (!cgraphQueueEmpty(pkg->queue)) {
+    const CGraphId from = cgraphQueuePop(pkg->queue);
+    while (cgraphIterNextEdge(pkg->iter, from, &id, &to)) {
       if (pkg->earlyStart[to] < pkg->earlyStart[from] + pkg->duration[id])
         pkg->earlyStart[to] = pkg->earlyStart[from] + pkg->duration[id];
-      if (--pkg->indegree[to] == 0) graphQueuePush(pkg->queue, to);
+      if (--pkg->indegree[to] == 0) cgraphQueuePush(pkg->queue, to);
     }
   }
 }
 
-static void backward(const Package *pkg, const GraphId *const begin,
-                     const GraphId *const end) {
-  const GraphId *p = end;
-  GraphId id, to;
+static void backward(const Package *pkg, const CGraphId *const begin,
+                     const CGraphId *const end) {
+  const CGraphId *p = end;
+  CGraphId id, to;
   do {
-    const GraphId from = *--p;
-    while (graphIterNextEdge(pkg->iter, from, &id, &to)) {
+    const CGraphId from = *--p;
+    while (cgraphIterNextEdge(pkg->iter, from, &id, &to)) {
       if (pkg->lateStart[from] > pkg->lateStart[to] - pkg->duration[id]) {
         pkg->lateStart[from] = pkg->lateStart[to] - pkg->duration[id];
         if (pkg->lateStart[from] == pkg->earlyStart[from]) {
@@ -45,23 +45,23 @@ static void backward(const Package *pkg, const GraphId *const begin,
   } while (p != begin);
 }
 
-static void init(Package *pkg, const GraphView *view,
-                 const GraphInt indegree[]) {
-  const GraphSize vertRange = view->vertRange;
+static void init(Package *pkg, const CGraphView *view,
+                 const CGraphInt indegree[]) {
+  const CGraphSize vertRange = view->vertRange;
 
-  pkg->iter = graphIterFromView(view);
-  pkg->queue = graphNewQueue(vertRange);
-  graphIndegreeInit(view, pkg->indegree, pkg->queue);
-  pkg->indegree = malloc(vertRange * sizeof(GraphInt));
-  memcpy(pkg->indegree, indegree, vertRange * sizeof(GraphInt));
+  pkg->iter = cgraphIterFromView(view);
+  pkg->queue = cgraphNewQueue(vertRange);
+  cgraphIndegreeInit(view, pkg->indegree, pkg->queue);
+  pkg->indegree = malloc(vertRange * sizeof(CGraphInt));
+  memcpy(pkg->indegree, indegree, vertRange * sizeof(CGraphInt));
   memset(pkg->earlyStart, 0, vertRange * sizeof(TimeType));
   memset(pkg->lateStart, UNREACHABLE_BYTE, vertRange * sizeof(TimeType));
-  memset(pkg->successor, INVALID_ID, vertRange * sizeof(GraphId));
+  memset(pkg->successor, INVALID_ID, vertRange * sizeof(CGraphId));
 }
 
-void criticalPath(const Graph *aoa, const GraphInt indegree[],
-                  const TimeType duration[], GraphId successor[],
-                  TimeType earlyStart[], TimeType lateStart[]) {
+void cgraphCriticalPath(const CGraph *aoa, const CGraphInt indegree[],
+                        const TimeType duration[], CGraphId successor[],
+                        TimeType earlyStart[], TimeType lateStart[]) {
   Package pkg;
   pkg.duration = duration;
   pkg.earlyStart = earlyStart;
@@ -70,14 +70,14 @@ void criticalPath(const Graph *aoa, const GraphInt indegree[],
   init(&pkg, VIEW(aoa), indegree);
 
   forward(&pkg);
-  graphIterResetAllEdges(pkg.iter);
+  cgraphIterResetAllEdges(pkg.iter);
 
-  const GraphId *last = pkg.queue->elems + aoa->vertNum - 1;
+  const CGraphId *last = pkg.queue->elems + aoa->vertNum - 1;
   lateStart[*last] = earlyStart[*last];
 
   backward(&pkg, pkg.queue->elems, last);
 
   free(pkg.indegree);
-  graphIterRelease(pkg.iter);
-  graphQueueRelease(pkg.queue);
+  cgraphIterRelease(pkg.iter);
+  cgraphQueueRelease(pkg.queue);
 }

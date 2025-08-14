@@ -1,26 +1,12 @@
 #include "private/structure/queue.h"
 #include <stdlib.h>
 
-GraphQueue *graphNewQueue(const GraphSize capacity) {
-  GraphQueue *queue = malloc(sizeof(GraphQueue) + capacity * sizeof(GraphId));
+CGraphQueue *cgraphNewQueue(const CGraphSize capacity) {
+  CGraphQueue *queue =
+      malloc(sizeof(CGraphQueue) + capacity * sizeof(CGraphId));
   queue->capacity = capacity;
   queue->size = queue->front = queue->rear = 0;
   return queue;
 }
 
-void graphQueuePush(GraphQueue *queue, const GraphId item) {
-  queue->elems[queue->front] = item;
-  if (++queue->front == queue->capacity) queue->front = 0;
-  ++queue->size;
-}
-
-GraphId graphQueuePop(GraphQueue *queue) {
-  const GraphId item = queue->elems[queue->rear];
-  if (++queue->rear == queue->capacity) queue->rear = 0;
-  --queue->size;
-  return item;
-}
-
-void graphQueueRelease(GraphQueue *queue) {
-  free(queue);
-}
+void cgraphQueueRelease(CGraphQueue *queue) { free(queue); }

@@ -1,30 +1,26 @@
 #ifndef HEAP_H
 #define HEAP_H
 
-#include "graph/type.h"
+#include "cgraph/type.h"
 
 typedef struct {
-  GraphSize capacity, size;
+  CGraphSize capacity, size;
   const WeightType *weights;
-  GraphId elems[0];
-  GraphId dummy;
-} GraphHeap;
+  CGraphId elems[0];
+  CGraphId dummy;
+} CGraphHeap;
 
-GraphHeap *graphHeapCreate(GraphSize capacity, const WeightType *weights);
+CGraphHeap *cgraphHeapCreate(CGraphSize capacity, const WeightType *weights);
+void cgraphHeapPush(CGraphHeap *heap, CGraphId id);
+CGraphId cgraphHeapPop(CGraphHeap *heap);
+void cgraphHeapRelease(CGraphHeap *heap);
+void cgraphHeapBuild(CGraphHeap *heap);
 
-void graphHeapPush(GraphHeap *heap, GraphId id);
-
-GraphId graphHeapPop(GraphHeap *heap);
-
-void graphHeapRelease(GraphHeap *heap);
-
-void graphHeapBuild(GraphHeap *heap);
-
-static inline GraphBool graphHeapEmpty(const GraphHeap *const heap) {
+static inline CGraphBool cgraphHeapEmpty(const CGraphHeap *const heap) {
   return heap->size == 0;
 }
 
-static void graphHeapPreBuild(GraphHeap *heap, const GraphId id) {
+static void cgraphHeapPreBuild(CGraphHeap *heap, const CGraphId id) {
   heap->elems[++heap->size] = id;
 }
 

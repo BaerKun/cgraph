@@ -4,37 +4,37 @@
 #include <stdlib.h>
 #include <string.h>
 
-void DijkstraShortest(const Graph *const graph, const WeightType weights[],
-                      GraphId predecessor[], const GraphId source,
-                      const GraphId target) {
+void cgraphShortestDijkstra(const CGraph *const graph,
+                            const WeightType weights[], CGraphId predecessor[],
+                            const CGraphId source, const CGraphId target) {
   enum { NOT_SEEN = 0, IN_HEAP, DONE };
-  const GraphView *view = VIEW(graph);
-  GraphIter *iter = graphIterFromView(view);
+  const CGraphView *view = VIEW(graph);
+  CGraphIter *iter = cgraphIterFromView(view);
   uint8_t *flags = calloc(view->vertRange, sizeof(uint8_t));
   WeightType *distance = malloc(view->vertRange * sizeof(WeightType));
-  GraphPairingHeap *heap = graphPairingHeapCreate(graph->vertNum, distance);
+  CGraphPairingHeap *heap = cgraphPairingHeapCreate(graph->vertNum, distance);
   memset(distance, UNREACHABLE_BYTE, view->vertRange * sizeof(WeightType));
-  memset(predecessor, INVALID_ID, view->vertRange * sizeof(GraphId));
+  memset(predecessor, INVALID_ID, view->vertRange * sizeof(CGraphId));
 
-  GraphId id, to;
+  CGraphId id, to;
   distance[source] = 0;
-  graphPairingHeapPush(heap, source);
-  while (!graphPairingHeapEmpty(heap)) {
-    const GraphId from = graphPairingHeapPop(heap);
+  cgraphPairingHeapPush(heap, source);
+  while (!cgraphPairingHeapEmpty(heap)) {
+    const CGraphId from = cgraphPairingHeapPop(heap);
     if (from == target) break;
     flags[from] = DONE;
 
-    while (graphIterNextEdge(iter, from, &id, &to)) {
+    while (cgraphIterNextEdge(iter, from, &id, &to)) {
       uint8_t *flag = flags + to;
       if (*flag != DONE && distance[from] + weights[id] < distance[to]) {
         distance[to] = distance[from] + weights[id];
         predecessor[to] = from;
 
         if (*flag == IN_HEAP) {
-          graphPairingHeapUpdate(heap, to);
+          cgraphPairingHeapUpdate(heap, to);
         } else {
           *flag = IN_HEAP;
-          graphPairingHeapPush(heap, to);
+          cgraphPairingHeapPush(heap, to);
         }
       }
     }
@@ -42,45 +42,46 @@ void DijkstraShortest(const Graph *const graph, const WeightType weights[],
 
   free(flags);
   free(distance);
-  graphIterRelease(iter);
-  graphPairingHeapRelease(heap);
+  cgraphIterRelease(iter);
+  cgraphPairingHeapRelease(heap);
 }
 
 // 无负值圈
-void BellmanFordShortest(const Graph *const graph, const WeightType weights[],
-                         GraphId predecessor[], const GraphId source) {
-  const GraphView *view = VIEW(graph);
-  GraphIter *iter = graphIterFromView(view);
-  GraphQueue *queue = graphNewQueue(graph->vertNum);
-  GraphBool *isInQueue = calloc(view->vertRange, sizeof(GraphBool));
+void cgraphShortestBellmanFord(const CGraph *const graph,
+                               const WeightType weights[],
+                               CGraphId predecessor[], const CGraphId source) {
+  const CGraphView *view = VIEW(graph);
+  CGraphIter *iter = cgraphIterFromView(view);
+  CGraphQueue *queue = cgraphNewQueue(graph->vertNum);
+  CGraphBool *isInQueue = calloc(view->vertRange, sizeof(CGraphBool));
   WeightType *distance = malloc(view->vertRange * sizeof(WeightType));
   memset(distance, UNREACHABLE_BYTE, view->vertRange * sizeof(WeightType));
-  memset(predecessor, INVALID_ID, view->vertRange * sizeof(GraphId));
+  memset(predecessor, INVALID_ID, view->vertRange * sizeof(CGraphId));
 
-  GraphId id, to;
+  CGraphId id, to;
   distance[source] = 0;
   // isInQueue[source] = GRAPH_TRUE;
-  graphQueuePush(queue, source);
-  while (!graphQueueEmpty(queue)) {
-    const GraphId from = graphQueuePop(queue);
-    isInQueue[from] = GRAPH_FALSE;
+  cgraphQueuePush(queue, source);
+  while (!cgraphQueueEmpty(queue)) {
+    const CGraphId from = cgraphQueuePop(queue);
+    isInQueue[from] = CGRAPH_FALSE;
 
-    while (graphIterNextEdge(iter, from, &id, &to)) {
+    while (cgraphIterNextEdge(iter, from, &id, &to)) {
       if (distance[to] <= distance[from] + weights[id]) continue;
 
       distance[to] = distance[from] + weights[id];
       predecessor[to] = from;
 
       if (!isInQueue[to]) {
-        graphQueuePush(queue, to);
-        graphIterResetEdge(iter, to);
-        isInQueue[to] = GRAPH_TRUE;
+        cgraphQueuePush(queue, to);
+        cgraphIterResetEdge(iter, to);
+        isInQueue[to] = CGRAPH_TRUE;
       }
     }
   }
 
   free(isInQueue);
   free(distance);
-  graphIterRelease(iter);
-  graphQueueRelease(queue);
+  cgraphIterRelease(iter);
+  cgraphQueueRelease(queue);
 }

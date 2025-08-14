@@ -1,12 +1,11 @@
 #include "private/structure/stack.h"
 #include <stdlib.h>
 
-GraphStack *graphNewStack(const GraphSize capacity) {
-  GraphStack *stack = malloc(sizeof(GraphStack) + capacity * sizeof(GraphId));
+CGraphStack *cgraphStackCreate(const CGraphSize capacity) {
+  CGraphStack *stack =
+      malloc(sizeof(CGraphStack) + capacity * sizeof(CGraphId));
   stack->size = 0;
   return stack;
 }
 
-void graphStackRelease(GraphStack *const stack) {
-  free(stack);
-}
+void cgraphStackRelease(CGraphStack *const stack) { free(stack); }

@@ -2,28 +2,28 @@
 #include <stdlib.h>
 #include <string.h>
 
-GraphIter *graphIterFromView(const GraphView *view) {
-  GraphIter *iter =
-      malloc(sizeof(GraphIter) + view->vertRange * sizeof(GraphId));
+CGraphIter *cgraphIterFromView(const CGraphView *view) {
+  CGraphIter *iter =
+      malloc(sizeof(CGraphIter) + view->vertRange * sizeof(CGraphId));
   iter->view = view;
   iter->vertCurr = view->vertHead;
-  memcpy(iter->edgeCurr, view->edgeHead, view->vertRange * sizeof(GraphId));
+  memcpy(iter->edgeCurr, view->edgeHead, view->vertRange * sizeof(CGraphId));
   return iter;
 }
 
-GraphIter *graphGetIter(const Graph *graph) {
-  return graphIterFromView(VIEW(graph));
+CGraphIter *cgraphGetIter(const CGraph *graph) {
+  return cgraphIterFromView(VIEW(graph));
 }
 
-void graphIterRelease(GraphIter *iter) { free(iter); }
+void cgraphIterRelease(CGraphIter *iter) { free(iter); }
 
-void graphIterResetAllEdges(GraphIter *iter) {
-  const GraphView *view = iter->view;
-  memcpy(iter->edgeCurr, view->edgeHead, view->vertRange * sizeof(GraphId));
+void cgraphIterResetAllEdges(CGraphIter *iter) {
+  const CGraphView *view = iter->view;
+  memcpy(iter->edgeCurr, view->edgeHead, view->vertRange * sizeof(CGraphId));
 }
 
-void graphIterCurr(const GraphIter *iter, GraphId *from, GraphId *eid,
-                   GraphId *to) {
+void cgraphIterCurr(const CGraphIter *iter, CGraphId *from, CGraphId *eid,
+                    CGraphId *to) {
   *from = iter->vertCurr;
   if (*from == INVALID_ID) return;
   *eid = iter->edgeCurr[*from];
@@ -31,8 +31,8 @@ void graphIterCurr(const GraphIter *iter, GraphId *from, GraphId *eid,
   parseForward(iter->view, *eid, eid, to);
 }
 
-extern void graphIterResetVert(GraphIter *iter);
-extern void graphIterResetEdge(GraphIter *iter, GraphId from);
-extern GraphBool graphIterNextVert(GraphIter *iter, GraphId *vid);
-extern GraphBool graphIterNextEdge(GraphIter *iter, GraphId from, GraphId *eid,
-                                   GraphId *to);
+extern void cgraphIterResetVert(CGraphIter *iter);
+extern void cgraphIterResetEdge(CGraphIter *iter, CGraphId from);
+extern CGraphBool cgraphIterNextVert(CGraphIter *iter, CGraphId *vid);
+extern CGraphBool cgraphIterNextEdge(CGraphIter *iter, CGraphId from,
+                                     CGraphId *eid, CGraphId *to);

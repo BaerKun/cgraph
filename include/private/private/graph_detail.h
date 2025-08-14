@@ -1,43 +1,43 @@
 #ifndef GRAPH_DETAIL_H
 #define GRAPH_DETAIL_H
 
-#include "graph/type.h"
+#include "cgraph/type.h"
 
 #define UNREACHABLE_BYTE 0x7f
 
 typedef struct {
-  GraphSize vertRange;
-  GraphId vertHead, *vertNext;
+  CGraphSize vertRange;
+  CGraphId vertHead, *vertNext;
 
-  GraphBool directed;
-  GraphSize edgeRange;
-  GraphId *edgeHead, *edgeNext;
-  GraphEndpoint *endpts;
-} GraphView; // 最小图信息
+  CGraphBool directed;
+  CGraphSize edgeRange;
+  CGraphId *edgeHead, *edgeNext;
+  CGraphEndpoint *endpts;
+} CGraphView; // 最小图信息
 
-struct GraphIter_ {
-  const GraphView *view;
-  GraphId vertCurr;
-  GraphId edgeCurr[0];
+struct CGraphIter_ {
+  const CGraphView *view;
+  CGraphId vertCurr;
+  CGraphId edgeCurr[0];
 };
 
 typedef struct {
-  GraphId vertFree, edgeFree;
-  GraphView view;
-} GraphManager;
+  CGraphId vertFree, edgeFree;
+  CGraphView view;
+} CGraphManager;
 
-typedef struct Attribute_ Attribute;
-struct Attribute_ {
+typedef struct CGraphAttribute_ CGraphAttribute;
+struct CGraphAttribute_ {
   uint64_t hash[2];
-  Attribute *next;
+  CGraphAttribute *next;
   void *vector;
 };
 
-struct Graph_ {
-  GraphSize vertCap, edgeCap;
-  GraphSize vertNum, edgeNum;
-  GraphManager manager;
-  Attribute *vertAttr, *edgeAttr;
+struct CGraph_ {
+  CGraphSize vertCap, edgeCap;
+  CGraphSize vertNum, edgeNum;
+  CGraphManager manager;
+  CGraphAttribute *vertAttr, *edgeAttr;
 };
 
 #define REVERSE(did) ((did) ^ 1)
