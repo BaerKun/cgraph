@@ -36,7 +36,6 @@ void cgraphIterCurr(const CGraphIter *iter, CGraphId *from, CGraphId *eid,
 }
 
 extern void cgraphIterResetVert(CGraphIter *iter);
-extern void cgraphIterResetEdge(CGraphIter *iter, CGraphId from);
 extern CGraphBool cgraphIterNextVert(CGraphIter *iter, CGraphId *vid);
 extern CGraphBool cgraphIterNextEdge(CGraphIter *iter, CGraphId from,
                                      CGraphId *eid, CGraphId *to);

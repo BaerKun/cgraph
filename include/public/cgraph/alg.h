@@ -7,10 +7,9 @@ void cgraphCriticalPath(const CGraph *aoa, const CGraphInt indegree[],
                         const TimeType duration[], CGraphId successor[],
                         TimeType earlyStart[], TimeType lateStart[]);
 
-void cgraphEulerCircuit(const CGraph *graph, CGraphLinkedNode **path,
-                        CGraphId src);
-
-void cgraphEulerPath(const CGraph *graph, CGraphLinkedNode **path, CGraphId src,
+// path: src -> ... -> dst
+void cgraphEulerCircuit(const CGraph *graph, CGraphId path[], CGraphId src);
+void cgraphEulerPath(const CGraph *graph, CGraphId path[], CGraphId src,
                      CGraphId dst);
 
 /*
