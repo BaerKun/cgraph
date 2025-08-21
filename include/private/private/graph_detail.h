@@ -5,6 +5,9 @@
 
 #define UNREACHABLE_BYTE 0x7f
 
+typedef struct CGraphAttribute_ CGraphAttribute;
+
+// 最小图结构
 typedef struct {
   CGraphSize vertRange;
   CGraphId vertHead, *vertNext;
@@ -13,7 +16,21 @@ typedef struct {
   CGraphSize edgeRange;
   CGraphId *edgeHead, *edgeNext;
   CGraphEndpoint *endpts;
-} CGraphView; // 最小图信息
+} CGraphView;
+
+// 增加ID管理
+typedef struct {
+  CGraphId vertFree, edgeFree;
+  CGraphView view;
+} CGraphManager;
+
+// 增加属性及扩容
+struct CGraph_ {
+  CGraphSize vertCap, edgeCap;
+  CGraphSize vertNum, edgeNum;
+  CGraphManager manager;
+  CGraphAttribute *vertAttr, *edgeAttr;
+};
 
 struct CGraphIter_ {
   const CGraphView *view;
@@ -21,23 +38,10 @@ struct CGraphIter_ {
   CGraphId edgeCurr[0];
 };
 
-typedef struct {
-  CGraphId vertFree, edgeFree;
-  CGraphView view;
-} CGraphManager;
-
-typedef struct CGraphAttribute_ CGraphAttribute;
 struct CGraphAttribute_ {
   uint64_t hash[2];
   CGraphAttribute *next;
   void *vector;
-};
-
-struct CGraph_ {
-  CGraphSize vertCap, edgeCap;
-  CGraphSize vertNum, edgeNum;
-  CGraphManager manager;
-  CGraphAttribute *vertAttr, *edgeAttr;
 };
 
 #define REVERSE(did) ((did) ^ 1)
