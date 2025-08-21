@@ -13,17 +13,17 @@ void cgraphMSTPrim(const CGraph *graph, const WeightType weights[],
   CGraphPairingHeap *heap = cgraphPairingHeapCreate(graph->vertNum, minWeight);
   memset(minWeight, UNREACHABLE_BYTE, view->vertRange * sizeof(WeightType));
 
-  CGraphId id, to;
+  CGraphId eid, to;
   predecessor[root] = INVALID_ID;
   cgraphPairingHeapPush(heap, root);
   while (!cgraphPairingHeapEmpty(heap)) {
     const CGraphId from = cgraphPairingHeapPop(heap);
     flags[from] = DONE;
 
-    while (cgraphIterNextEdge(iter, from, &id, &to)) {
+    while (cgraphIterNextEdge(iter, from, &eid, &to)) {
       uint8_t *flag = flags + to;
-      if (*flag != DONE && weights[id] < minWeight[to]) {
-        minWeight[to] = weights[id];
+      if (*flag != DONE && weights[eid] < minWeight[to]) {
+        minWeight[to] = weights[eid];
         predecessor[to] = from;
 
         if (*flag == IN_HEAP) {

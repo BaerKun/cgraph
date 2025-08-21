@@ -16,7 +16,7 @@ void cgraphShortestDijkstra(const CGraph *const graph,
   memset(distance, UNREACHABLE_BYTE, view->vertRange * sizeof(WeightType));
   memset(predecessor, INVALID_ID, view->vertRange * sizeof(CGraphId));
 
-  CGraphId id, to;
+  CGraphId eid, to;
   distance[source] = 0;
   cgraphPairingHeapPush(heap, source);
   while (!cgraphPairingHeapEmpty(heap)) {
@@ -24,10 +24,10 @@ void cgraphShortestDijkstra(const CGraph *const graph,
     if (from == target) break;
     flags[from] = DONE;
 
-    while (cgraphIterNextEdge(iter, from, &id, &to)) {
+    while (cgraphIterNextEdge(iter, from, &eid, &to)) {
       uint8_t *flag = flags + to;
-      if (*flag != DONE && distance[from] + weights[id] < distance[to]) {
-        distance[to] = distance[from] + weights[id];
+      if (*flag != DONE && distance[from] + weights[eid] < distance[to]) {
+        distance[to] = distance[from] + weights[eid];
         predecessor[to] = from;
 
         if (*flag == IN_HEAP) {
@@ -58,7 +58,7 @@ void cgraphShortestBellmanFord(const CGraph *const graph,
   memset(distance, UNREACHABLE_BYTE, view->vertRange * sizeof(WeightType));
   memset(predecessor, INVALID_ID, view->vertRange * sizeof(CGraphId));
 
-  CGraphId id, to;
+  CGraphId eid, to;
   distance[source] = 0;
   // isInQueue[source] = GRAPH_TRUE;
   cgraphQueuePush(queue, source);
@@ -66,10 +66,10 @@ void cgraphShortestBellmanFord(const CGraph *const graph,
     const CGraphId from = cgraphQueuePop(queue);
     isInQueue[from] = CGRAPH_FALSE;
 
-    while (cgraphIterNextEdge(iter, from, &id, &to)) {
-      if (distance[to] <= distance[from] + weights[id]) continue;
+    while (cgraphIterNextEdge(iter, from, &eid, &to)) {
+      if (distance[to] <= distance[from] + weights[eid]) continue;
 
-      distance[to] = distance[from] + weights[id];
+      distance[to] = distance[from] + weights[eid];
       predecessor[to] = from;
 
       if (!isInQueue[to]) {

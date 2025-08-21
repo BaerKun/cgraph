@@ -16,12 +16,12 @@ typedef struct {
 } Package;
 
 static void forward(const Package *const pkg) {
-  CGraphId id, to;
+  CGraphId eid, to;
   while (!cgraphQueueEmpty(pkg->queue)) {
     const CGraphId from = cgraphQueuePop(pkg->queue);
-    while (cgraphIterNextEdge(pkg->iter, from, &id, &to)) {
-      if (pkg->earlyStart[to] < pkg->earlyStart[from] + pkg->duration[id])
-        pkg->earlyStart[to] = pkg->earlyStart[from] + pkg->duration[id];
+    while (cgraphIterNextEdge(pkg->iter, from, &eid, &to)) {
+      if (pkg->earlyStart[to] < pkg->earlyStart[from] + pkg->duration[eid])
+        pkg->earlyStart[to] = pkg->earlyStart[from] + pkg->duration[eid];
       if (--pkg->indegree[to] == 0) cgraphQueuePush(pkg->queue, to);
     }
   }
@@ -30,12 +30,12 @@ static void forward(const Package *const pkg) {
 static void backward(const Package *pkg, const CGraphId *const begin,
                      const CGraphId *const end) {
   const CGraphId *p = end;
-  CGraphId id, to;
+  CGraphId eid, to;
   do {
     const CGraphId from = *--p;
-    while (cgraphIterNextEdge(pkg->iter, from, &id, &to)) {
-      if (pkg->lateStart[from] > pkg->lateStart[to] - pkg->duration[id]) {
-        pkg->lateStart[from] = pkg->lateStart[to] - pkg->duration[id];
+    while (cgraphIterNextEdge(pkg->iter, from, &eid, &to)) {
+      if (pkg->lateStart[from] > pkg->lateStart[to] - pkg->duration[eid]) {
+        pkg->lateStart[from] = pkg->lateStart[to] - pkg->duration[eid];
         if (pkg->lateStart[from] == pkg->earlyStart[from]) {
           pkg->successor[from] = to;
           break;

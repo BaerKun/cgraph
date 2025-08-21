@@ -21,11 +21,11 @@ static void findArticulationStep(Package *pkg, const CGraphId from) {
   // 排除根节点，单独处理
   Vertex *vertex = pkg->vertices + from;
   CGraphBool isArt = vertex->pred != NULL ? CGRAPH_TRUE : CGRAPH_FALSE;
-  CGraphId id, to;
+  CGraphId eid, to;
 
   vertex->visited = 1;
   vertex->lowest = vertex->preorder = pkg->topo++;
-  while (cgraphIterNextEdge(pkg->iter, from, &id, &to)) {
+  while (cgraphIterNextEdge(pkg->iter, from, &eid, &to)) {
     Vertex *adjacent = pkg->vertices + to;
 
     if (!adjacent->visited) {
