@@ -6,8 +6,8 @@
 typedef struct {
   CGraphSize capacity, size;
   const WeightType *weights;
-  CGraphId elems[0];
-  CGraphId dummy;
+  CGraphId elems[1];
+  // CGraphId dummy;
 } CGraphHeap;
 
 CGraphHeap *cgraphHeapCreate(CGraphSize capacity, const WeightType *weights);

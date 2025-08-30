@@ -1,5 +1,5 @@
 /*
-* PCG Random Number Generation for C.
+ * PCG Random Number Generation for C.
  *
  * Copyright 2014 Melissa O'Neill <oneill@pcg-random.org>
  *
@@ -24,13 +24,24 @@
 // Modified by Bear Kun for cgraph.
 
 #include "private/random.h"
+
+#ifdef _MSC_VER // MSVC
+#include <intrin.h>
+typedef volatile int64_t atomic_int64_t;
+#define atomic_add _InterlockedExchangeAdd64
+
+#else
 #include <stdatomic.h>
+typedef _Atomic int64_t atomic_int64_t;
+#define atomic_add atomic_fetch_add
+
+#endif
 
 CGraphRNG cgraphRngCreate(const uint64_t seed) {
-  static _Atomic uint64_t seq = 0xda3e39cb94b95bdbULL;
   CGraphRNG rng;
-  rng.inc = atomic_fetch_add(&seq, 0x9e3779b97f4a7c15ULL) | 1u;
-  rng.state = (seed ^ 0x853c49e6748fea9bULL) + rng.inc;
+  static atomic_int64_t seq = 0xda3e39cb94b95bdbULL;
+  rng.inc = atomic_add(&seq, 0x853c49e6748fea9bULL) | 1;
+  rng.state = seed + rng.inc;
   rng.state = rng.state * 6364136223846793005ULL + rng.inc;
   return rng;
 }
