@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(cgraph C)
 
-set(CMAKE_C_STANDARD 23)
+set(CMAKE_C_STANDARD 11)
 
 file(GLOB_RECURSE SOURCES "src/*.c")
 add_library(cgraph STATIC ${SOURCES})
