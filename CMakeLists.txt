@@ -3,7 +3,7 @@ project(cgraph C)
 
 set(CMAKE_C_STANDARD 11)
 
-file(GLOB_RECURSE SOURCES "src/*.c")
+file(GLOB_RECURSE SOURCES "src/alg/*.c" "src/private/*.c")
 add_library(cgraph STATIC ${SOURCES})
 target_include_directories(cgraph PUBLIC include/public)
 target_include_directories(cgraph PRIVATE include/private)

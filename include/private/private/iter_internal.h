@@ -3,8 +3,6 @@
 
 #include "graph_detail.h"
 
-#define VIEW(graph) (&(graph)->manager.view)
-
 #define FOREACH_EDGE(view, from, eid, to)                                      \
   for (CGraphId from = view->vertHead; from != INVALID_ID;                     \
        from = view->vertNext[from])                                            \

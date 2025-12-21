@@ -18,18 +18,11 @@ typedef struct {
   CGraphEndpoint *endpts;
 } CGraphView;
 
-// 增加ID管理
-typedef struct {
-  CGraphId vertFree, edgeFree;
-  CGraphView view;
-} CGraphManager;
-
-// 增加属性及扩容
 struct CGraph_ {
   CGraphSize vertCap, edgeCap;
   CGraphSize vertNum, edgeNum;
-  CGraphManager manager;
-  CGraphAttribute *vertAttr, *edgeAttr;
+  CGraphId vertFree, edgeFree;
+  CGraphView view;
 };
 
 struct CGraphIter_ {
@@ -38,12 +31,7 @@ struct CGraphIter_ {
   CGraphId edgeCurr[0];
 };
 
-struct CGraphAttribute_ {
-  uint64_t hash[2];
-  CGraphAttribute *next;
-  void *vector;
-};
-
 #define REVERSE(did) ((did) ^ 1)
+#define VIEW(graph) (&(graph)->view)
 
 #endif // GRAPH_DETAIL_H

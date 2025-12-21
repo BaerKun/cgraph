@@ -12,8 +12,8 @@ CGraphId cgraphAddVert(CGraph *graph);
 CGraphId cgraphAddEdge(CGraph *graph, CGraphId from, CGraphId to,
                        CGraphBool directed);
 void cgraphReserveVert(CGraph *graph, CGraphSize num);
-void cgraphDeleteVert(CGraph *graph, CGraphId id);
-void cgraphDeleteEdge(CGraph *graph, CGraphId id);
+void cgraphDeleteVert(CGraph *graph, CGraphId vid);
+void cgraphDeleteEdge(CGraph *graph, CGraphId eid);
 
 void *cgraphGetEdgeAttribute(const CGraph *graph, const char name[16]);
 void cgraphAddEdgeAttribute(CGraph *graph, const char name[16],
